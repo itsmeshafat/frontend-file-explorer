@@ -1,0 +1,376 @@
+/**
+ * File Explorer Admin Styles — crafted by Shafat Mahmud Khan (WordPress Developer, https://itsmeshafat.com)
+ */
+
+/* Container */
+.file-explorer-container {
+    margin: 20px 0;
+}
+
+/* Toolbar */
+.file-explorer-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fff;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    padding: 15px;
+}
+
+.file-explorer-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.file-explorer-actions button {
+    display: flex;
+    align-items: center;
+}
+
+.file-explorer-actions button .material-icons {
+    margin-right: 5px;
+}
+
+.file-explorer-breadcrumb {
+    display: flex;
+    align-items: center;
+}
+
+.file-explorer-breadcrumb button {
+    margin-right: 5px;
+}
+
+#file-explorer-current-path {
+    font-size: 14px;
+    color: #555;
+    margin-left: 10px;
+}
+
+/* Content */
+.file-explorer-content {
+    background-color: #fff;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    min-height: 400px;
+    padding: 20px;
+    position: relative;
+}
+
+.file-explorer-items {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 20px;
+}
+
+.file-explorer-item {
+    background-color: #f9f9f9;
+    border-radius: 4px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    padding: 15px;
+    text-align: center;
+    transition: all 0.2s ease;
+}
+
+.file-explorer-item:hover {
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+}
+
+.file-explorer-item-icon {
+    color: #2271b1;
+    font-size: 48px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+/* Make folder icons larger */
+.file-explorer-item[data-type="folder"] .file-explorer-item-icon .material-icons {
+    font-size: 72px;
+    margin-top: -10px;
+    margin-bottom: -10px;
+}
+
+.file-explorer-item-preview {
+    height: 120px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.file-explorer-item-preview img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.file-explorer-item-name {
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 10px;
+    word-break: break-word;
+}
+
+.file-explorer-item-actions {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.file-explorer-item:hover .file-explorer-item-actions {
+    opacity: 1;
+}
+
+.file-explorer-item-actions button {
+    background: none;
+    border: none;
+    color: #2271b1;
+    cursor: pointer;
+    padding: 5px;
+}
+
+.file-explorer-item-actions button:hover {
+    color: #135e96;
+}
+
+.file-explorer-item-actions .material-icons {
+    font-size: 20px;
+}
+
+/* Empty state */
+.file-explorer-empty {
+    align-items: center;
+    color: #888;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 300px;
+}
+
+.file-explorer-empty .material-icons {
+    font-size: 64px;
+    margin-bottom: 20px;
+}
+
+/* Loading state */
+.file-explorer-loading {
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.8);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: center;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    z-index: 10;
+}
+
+.file-explorer-loading .spinner {
+    margin-bottom: 10px;
+}
+
+/* Pagination */
+.file-explorer-pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.file-explorer-credit {
+    margin-top: 30px;
+    text-align: center;
+    font-size: 12px;
+    color: #6b6b6b;
+}
+
+/* Modal */
+.file-explorer-modal {
+    background-color: rgba(0, 0, 0, 0.5);
+    display: none;
+    height: 100%;
+    left: 0;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 100;
+}
+
+.file-explorer-modal-content {
+    background-color: #fff;
+    border-radius: 4px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    margin: 10% auto;
+    max-width: 500px;
+    padding: 20px;
+    position: relative;
+}
+
+.file-explorer-modal-close {
+    color: #aaa;
+    cursor: pointer;
+    font-size: 28px;
+    font-weight: bold;
+    position: absolute;
+    right: 20px;
+    top: 10px;
+}
+
+.file-explorer-modal-close:hover {
+    color: #555;
+}
+
+.file-explorer-modal h2 {
+    margin-top: 0;
+}
+
+.file-explorer-modal-body {
+    margin-bottom: 20px;
+}
+
+.file-explorer-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+/* Dropzone */
+.file-explorer-dropzone {
+    border: 2px dashed #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-bottom: 15px;
+    padding: 30px;
+    text-align: center;
+    transition: border-color 0.2s ease;
+}
+
+.file-explorer-dropzone:hover,
+.file-explorer-dropzone.drag-over {
+    border-color: #2271b1;
+}
+
+.file-explorer-dropzone-text {
+    color: #888;
+}
+
+.file-explorer-dropzone-text .material-icons {
+    font-size: 48px;
+    margin-bottom: 10px;
+}
+
+/* Upload progress */
+.file-explorer-upload-progress {
+    background-color: #f0f0f0;
+    border-radius: 4px;
+    height: 20px;
+    margin-bottom: 15px;
+    overflow: hidden;
+    position: relative;
+}
+
+.file-explorer-upload-progress-bar {
+    background-color: #2271b1;
+    height: 100%;
+    transition: width 0.3s ease;
+    width: 0;
+}
+
+.file-explorer-upload-progress-text {
+    color: #fff;
+    font-size: 12px;
+    font-weight: bold;
+    left: 50%;
+    position: absolute;
+    text-align: center;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.file-explorer-upload-files {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.file-explorer-upload-file {
+    align-items: center;
+    border-bottom: 1px solid #f0f0f0;
+    display: flex;
+    padding: 10px 0;
+}
+
+.file-explorer-upload-file-name {
+    flex: 1;
+    margin-right: 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.file-explorer-upload-file-status {
+    font-size: 12px;
+}
+
+.file-explorer-upload-file-status.success {
+    color: #46b450;
+}
+
+.file-explorer-upload-file-status.error {
+    color: #dc3232;
+}
+
+/* Responsive */
+@media (max-width: 782px) {
+    .file-explorer-toolbar {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .file-explorer-actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    .file-explorer-breadcrumb {
+        width: 100%;
+    }
+    
+    .file-explorer-items {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 15px;
+    }
+    
+    .file-explorer-modal-content {
+        margin: 20% auto;
+        max-width: 90%;
+    }
+}
+
+@media (max-width: 480px) {
+    .file-explorer-items {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 10px;
+    }
+    
+    .file-explorer-item {
+        padding: 10px;
+    }
+    
+    .file-explorer-item-icon {
+        font-size: 36px;
+    }
+    
+    .file-explorer-item-preview {
+        height: 80px;
+    }
+    
+    .file-explorer-item-name {
+        font-size: 12px;
+    }
+}
