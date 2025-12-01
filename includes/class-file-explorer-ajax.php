@@ -53,14 +53,14 @@ class File_Explorer_Ajax {
         
         // Check permissions
         if (!current_user_can('upload_files')) {
-            wp_send_json_error(__('You do not have permission to access this content.', 'file-explorer'));
+            wp_send_json_error(__('You do not have permission to access this content.', 'frontend-file-explorer-plugin'));
         }
         
         $folder_path = isset($_POST['path']) ? sanitize_text_field($_POST['path']) : '/';
         
         // Validate folder path
         if (strpos($folder_path, '..') !== false) {
-            wp_send_json_error(__('Invalid folder path.', 'file-explorer'));
+            wp_send_json_error(__('Invalid folder path.', 'frontend-file-explorer-plugin'));
         }
         
         // Get the uploads directory
@@ -72,7 +72,7 @@ class File_Explorer_Ajax {
         
         // Check if the path exists and is a directory
         if (!file_exists($server_path) || !is_dir($server_path)) {
-            wp_send_json_error(__('The specified folder does not exist.', 'file-explorer'));
+            wp_send_json_error(__('The specified folder does not exist.', 'frontend-file-explorer-plugin'));
         }
         
         // Get folder contents
@@ -253,12 +253,12 @@ class File_Explorer_Ajax {
         $parent_path = isset($_POST['parent_path']) ? sanitize_text_field($_POST['parent_path']) : '/';
         
         if (empty($folder_name)) {
-            wp_send_json_error(__('Please enter a folder name.', 'file-explorer'));
+            wp_send_json_error(__('Please enter a folder name.', 'frontend-file-explorer-plugin'));
         }
         
         // Validate parent path
         if (strpos($parent_path, '..') !== false) {
-            wp_send_json_error(__('Invalid parent path.', 'file-explorer'));
+            wp_send_json_error(__('Invalid parent path.', 'frontend-file-explorer-plugin'));
         }
         
         // Get the uploads directory
@@ -271,19 +271,19 @@ class File_Explorer_Ajax {
         
         // Check if the parent directory exists
         if (!file_exists($parent_dir) || !is_dir($parent_dir)) {
-            wp_send_json_error(__('The parent directory does not exist.', 'file-explorer'));
+            wp_send_json_error(__('The parent directory does not exist.', 'frontend-file-explorer-plugin'));
         }
         
         // Check if the folder already exists
         if (file_exists($new_folder)) {
-            wp_send_json_error(__('A folder with this name already exists.', 'file-explorer'));
+            wp_send_json_error(__('A folder with this name already exists.', 'frontend-file-explorer-plugin'));
         }
         
         // Create the folder
         if (wp_mkdir_p($new_folder)) {
-            wp_send_json_success(__('Folder created successfully.', 'file-explorer'));
+            wp_send_json_success(__('Folder created successfully.', 'frontend-file-explorer-plugin'));
         } else {
-            wp_send_json_error(__('Failed to create folder.', 'file-explorer'));
+            wp_send_json_error(__('Failed to create folder.', 'frontend-file-explorer-plugin'));
         }
     }
     
@@ -296,7 +296,7 @@ class File_Explorer_Ajax {
         
         // Check permissions
         if (!current_user_can('upload_files')) {
-            wp_send_json_error(__('You do not have permission to upload files.', 'file-explorer'));
+            wp_send_json_error(__('You do not have permission to upload files.', 'frontend-file-explorer-plugin'));
         }
         
         $folder_path = isset($_POST['folder_path']) ? sanitize_text_field($_POST['folder_path']) : '/';
@@ -317,7 +317,7 @@ class File_Explorer_Ajax {
         
         // Check if files were uploaded
         if (empty($_FILES['files'])) {
-            wp_send_json_error(__('No files were uploaded.', 'file-explorer'));
+            wp_send_json_error(__('No files were uploaded.', 'frontend-file-explorer-plugin'));
         }
         
         $files = $_FILES['files'];
@@ -343,11 +343,11 @@ class File_Explorer_Ajax {
         
         if (count($uploaded_files) > 0) {
             wp_send_json_success(array(
-                'message' => sprintf(__('%d files uploaded successfully.', 'file-explorer'), count($uploaded_files)),
+                'message' => sprintf(__('%d files uploaded successfully.', 'frontend-file-explorer-plugin'), count($uploaded_files)),
                 'files' => $uploaded_files
             ));
         } else {
-            wp_send_json_error(__('Failed to upload files.', 'file-explorer'));
+            wp_send_json_error(__('Failed to upload files.', 'frontend-file-explorer-plugin'));
         }
     }
     
@@ -360,7 +360,7 @@ class File_Explorer_Ajax {
         
         // Check permissions
         if (!current_user_can('upload_files')) {
-            wp_send_json_error(__('You do not have permission to copy files.', 'file-explorer'));
+            wp_send_json_error(__('You do not have permission to copy files.', 'frontend-file-explorer-plugin'));
         }
         
         // Get parameters
@@ -370,7 +370,7 @@ class File_Explorer_Ajax {
         // Decode files JSON
         $files = json_decode($files_json, true);
         if (!$files || !is_array($files)) {
-            wp_send_json_error(__('Invalid files data.', 'file-explorer'));
+            wp_send_json_error(__('Invalid files data.', 'frontend-file-explorer-plugin'));
         }
         
         // Get the uploads directory
@@ -406,11 +406,11 @@ class File_Explorer_Ajax {
         
         if (count($copied_files) > 0) {
             wp_send_json_success(sprintf(
-                __('%d files copied successfully.', 'file-explorer'),
+                __('%d files copied successfully.', 'frontend-file-explorer-plugin'),
                 count($copied_files)
             ));
         } else {
-            wp_send_json_error(__('No files were copied.', 'file-explorer'));
+            wp_send_json_error(__('No files were copied.', 'frontend-file-explorer-plugin'));
         }
     }
     
@@ -423,19 +423,19 @@ class File_Explorer_Ajax {
         
         // Check permissions
         if (!current_user_can('upload_files')) {
-            wp_send_json_error(__('You do not have permission to delete files or folders.', 'file-explorer'));
+            wp_send_json_error(__('You do not have permission to delete files or folders.', 'frontend-file-explorer-plugin'));
         }
         
         $path = isset($_POST['path']) ? sanitize_text_field($_POST['path']) : '';
         $type = isset($_POST['type']) ? sanitize_text_field($_POST['type']) : '';
         
         if (empty($path) || empty($type)) {
-            wp_send_json_error(__('Invalid request.', 'file-explorer'));
+            wp_send_json_error(__('Invalid request.', 'frontend-file-explorer-plugin'));
         }
         
         // Validate path
         if (strpos($path, '..') !== false) {
-            wp_send_json_error(__('Invalid path.', 'file-explorer'));
+            wp_send_json_error(__('Invalid path.', 'frontend-file-explorer-plugin'));
         }
         
         // Get the uploads directory
@@ -447,7 +447,7 @@ class File_Explorer_Ajax {
         
         // Check if the path exists
         if (!file_exists($full_path)) {
-            wp_send_json_error(__('The specified item does not exist.', 'file-explorer'));
+            wp_send_json_error(__('The specified item does not exist.', 'frontend-file-explorer-plugin'));
         }
         
         // Delete the item
@@ -461,9 +461,9 @@ class File_Explorer_Ajax {
         }
         
         if ($success) {
-            wp_send_json_success(__('Item deleted successfully.', 'file-explorer'));
+            wp_send_json_success(__('Item deleted successfully.', 'frontend-file-explorer-plugin'));
         } else {
-            wp_send_json_error(__('Failed to delete item.', 'file-explorer'));
+            wp_send_json_error(__('Failed to delete item.', 'frontend-file-explorer-plugin'));
         }
     }
     
@@ -481,7 +481,7 @@ class File_Explorer_Ajax {
         
         // Validate path
         if (strpos($folder_path, '..') !== false) {
-            wp_die(__('Invalid path.', 'file-explorer'));
+            wp_die(__('Invalid path.', 'frontend-file-explorer-plugin'));
         }
         
         // Get the uploads directory
@@ -493,7 +493,7 @@ class File_Explorer_Ajax {
         
         // Check if the path exists
         if (!file_exists($full_path)) {
-            wp_die(__('The specified item does not exist.', 'file-explorer'));
+            wp_die(__('The specified item does not exist.', 'frontend-file-explorer-plugin'));
         }
         
         // Create a temporary file for the ZIP
@@ -502,7 +502,7 @@ class File_Explorer_Ajax {
         // Create ZIP file
         $zip = new ZipArchive();
         if ($zip->open($temp_file, ZipArchive::CREATE) !== true) {
-            wp_die(__('Could not create ZIP file.', 'file-explorer'));
+            wp_die(__('Could not create ZIP file.', 'frontend-file-explorer-plugin'));
         }
         
         // Add files to the ZIP
@@ -560,7 +560,7 @@ class File_Explorer_Ajax {
         
         // Check if the file exists
         if (!file_exists($full_path) || is_dir($full_path)) {
-            wp_send_json_error(__('The specified file does not exist.', 'file-explorer'));
+            wp_send_json_error(__('The specified file does not exist.', 'frontend-file-explorer-plugin'));
         }
         
         // Generate the URL

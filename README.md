@@ -1,4 +1,4 @@
-# File Explorer WordPress Plugin
+# Frontend File Explorer Plugin
 
 <p align="center">
   <img src="https://img.shields.io/badge/WordPress-Plugin-blue?logo=wordpress" alt="WordPress badge" />
@@ -8,7 +8,7 @@
 </p>
 
 <p align="center">
-  A modern, Windows Explorer-inspired file management experience for WordPress administrators and site visitors. The plugin adds an intuitive admin interface plus a fully responsive frontend shortcode for browsing, uploading, and sharing files stored under <code>wp-content/uploads/downloads</code>.
+  Frontend File Explorer Plugin is a modern, Windows Explorer-inspired file management experience for WordPress administrators and site visitors. The plugin adds an intuitive admin interface plus a fully responsive frontend shortcode for browsing, uploading, and sharing files stored under <code>wp-content/uploads/downloads</code>.
 </p>
 
 ---
@@ -43,7 +43,7 @@
 | **Permissions** | Admin actions (upload, copy, delete, ZIP) gated by `upload_files`; frontend browsing is read-only. |
 | **Performance** | AJAX navigation with server-side pagination through `File_Explorer_Ajax`. |
 | **Sharing** | One-click ZIP downloads plus copyable public links. |
-| **Localization** | Text domain `file-explorer` ready for translation. |
+| **Localization** | Text domain `frontend-file-explorer-plugin` ready for translation. |
 
 > 💡 **Tip:** Pair the plugin with WP roles/capabilities plugins (e.g., Members) to fine-tune who can manage files.
 
@@ -153,7 +153,7 @@ A: Each site manages its own `uploads/downloads` directory; network-activate for
 A: Defaults mirror `allowed_file_types` option (configured during activation). Update this option to allow or ban specific extensions.
 
 **Q: How do I translate the UI?**  
-A: Use tools like Loco Translate or Poedit targeting the `file-explorer` text domain; drop `.mo` files under `languages/`.
+A: Use tools like Loco Translate or Poedit targeting the `frontend-file-explorer-plugin` text domain; drop `.mo` files under `languages/`.
 
 ## Roadmap
 
@@ -168,6 +168,7 @@ Have a feature request? Open an issue describing the use case.
 
 | Version | Date | Notes |
 |---------|------|-------|
+| 1.0.1 | 2025-12-01 | Rename to Frontend File Explorer Plugin, align text domain, and improve documentation. |
 | 1.0.0 | 2025-11-30 | Initial public release with admin/ frontend explorers, ZIP downloads, and AJAX tooling. |
 
 ## Contributing

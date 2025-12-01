@@ -17,11 +17,11 @@ if (!defined('ABSPATH')) {
 <div class="file-explorer-frontend-container">
     <div class="file-explorer-toolbar">
         <div class="file-explorer-breadcrumb">
-            <button type="button" id="file-explorer-frontend-home" class="file-explorer-btn" title="<?php _e('Home', 'file-explorer'); ?>">
+            <button type="button" id="file-explorer-frontend-home" class="file-explorer-btn" title="<?php _e('Home', 'frontend-file-explorer-plugin'); ?>">
                 <span class="material-icons">home</span>
             </button>
             
-            <button type="button" id="file-explorer-frontend-back" class="file-explorer-btn" title="<?php _e('Go Back', 'file-explorer'); ?>">
+            <button type="button" id="file-explorer-frontend-back" class="file-explorer-btn" title="<?php _e('Go Back', 'frontend-file-explorer-plugin'); ?>">
                 <span class="material-icons">arrow_back</span>
             </button>
             
@@ -29,7 +29,7 @@ if (!defined('ABSPATH')) {
         </div>
         
         <div class="file-explorer-actions">
-            <button type="button" id="file-explorer-frontend-download-zip" class="file-explorer-btn" title="<?php _e('Download as ZIP', 'file-explorer'); ?>" style="display: none;">
+            <button type="button" id="file-explorer-frontend-download-zip" class="file-explorer-btn" title="<?php _e('Download as ZIP', 'frontend-file-explorer-plugin'); ?>" style="display: none;">
                 <span class="material-icons">archive</span>
                 <span class="button-text"><?php _e('Download as ZIP', 'file-explorer'); ?></span>
             </button>
@@ -43,18 +43,18 @@ if (!defined('ABSPATH')) {
         
         <div id="file-explorer-frontend-empty" class="file-explorer-empty" style="display: none;">
             <span class="material-icons">folder_open</span>
-            <p><?php _e('This folder is empty', 'file-explorer'); ?></p>
+            <p><?php _e('This folder is empty', 'frontend-file-explorer-plugin'); ?></p>
         </div>
         
         <div id="file-explorer-frontend-loading" class="file-explorer-loading" style="display: none;">
             <span class="material-icons">hourglass_empty</span>
-            <p><?php _e('Loading...', 'file-explorer'); ?></p>
+            <p><?php _e('Loading...', 'frontend-file-explorer-plugin'); ?></p>
         </div>
     </div>
     
     <div class="file-explorer-pagination">
         <button type="button" id="file-explorer-frontend-load-more" class="file-explorer-btn" style="display: none;">
-            <?php _e('Load More', 'file-explorer'); ?>
+            <?php _e('Load More', 'frontend-file-explorer-plugin'); ?>
         </button>
     </div>
 
@@ -76,10 +76,10 @@ if (!defined('ABSPATH')) {
         </div>
         <div class="file-explorer-item-name">{{ data.name }}</div>
         <div class="file-explorer-item-actions">
-            <button type="button" class="file-explorer-action-open" title="<?php _e('Open', 'file-explorer'); ?>">
+            <button type="button" class="file-explorer-action-open" title="<?php _e('Open', 'frontend-file-explorer-plugin'); ?>">
                 <span class="material-icons">open_in_new</span>
             </button>
-            <button type="button" class="file-explorer-action-download-zip" title="<?php _e('Download as ZIP', 'file-explorer'); ?>">
+            <button type="button" class="file-explorer-action-download-zip" title="<?php _e('Download as ZIP', 'frontend-file-explorer-plugin'); ?>">
                 <span class="material-icons">download</span>
             </button>
         </div>
@@ -115,10 +115,10 @@ if (!defined('ABSPATH')) {
         <# } #>
         <div class="file-explorer-item-name">{{ data.name }}</div>
         <div class="file-explorer-item-actions">
-            <button type="button" class="file-explorer-action-download" title="<?php _e('Download', 'file-explorer'); ?>">
+            <button type="button" class="file-explorer-action-download" title="<?php _e('Download', 'frontend-file-explorer-plugin'); ?>">
                 <span class="material-icons">download</span>
             </button>
-            <button type="button" class="file-explorer-action-copy-link" title="<?php _e('Copy Link', 'file-explorer'); ?>">
+            <button type="button" class="file-explorer-action-copy-link" title="<?php _e('Copy Link', 'frontend-file-explorer-plugin'); ?>">
                 <span class="material-icons">link</span>
             </button>
         </div>

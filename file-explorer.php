@@ -1,12 +1,12 @@
 <?php
 /**
- * Plugin Name: File Explorer
+ * Plugin Name: Frontend File Explorer Plugin
  * Plugin URI: https://example.com/plugins/file-explorer
  * Description: A modern file management system with Windows Explorer-like UI for WordPress
- * Version: 1.0.0
+ * Version: 1.0.1
  * Author: Shafat Mahmud Khan
- * Author URI: https://linktr.ee/itsme_shafat
- * Text Domain: file-explorer
+ * Author URI: https://itsmeshafat.com
+ * Text Domain: frontend-file-explorer-plugin
  * Domain Path: /languages
  * License: GPL v2 or later
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -18,7 +18,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Define plugin constants
-define('FILE_EXPLORER_VERSION', '1.0.0');
+define('FILE_EXPLORER_VERSION', '1.0.1');
 define('FILE_EXPLORER_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('FILE_EXPLORER_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('FILE_EXPLORER_PLUGIN_BASENAME', plugin_basename(__FILE__));

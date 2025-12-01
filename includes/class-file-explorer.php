@@ -77,7 +77,7 @@ class File_Explorer {
      * Load plugin text domain
      */
     public function load_plugin_textdomain() {
-        load_plugin_textdomain('file-explorer', false, dirname(FILE_EXPLORER_PLUGIN_BASENAME) . '/languages');
+        load_plugin_textdomain('frontend-file-explorer-plugin', false, dirname(FILE_EXPLORER_PLUGIN_BASENAME) . '/languages');
     }
 
     /**

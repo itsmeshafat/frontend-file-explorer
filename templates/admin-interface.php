@@ -12,32 +12,32 @@ if (!defined('ABSPATH')) {
 }
 ?>
 <div class="wrap file-explorer-container">
-    <h1><?php _e('File Upload Manager', 'file-explorer'); ?></h1>
+    <h1><?php _e('File Upload Manager', 'frontend-file-explorer-plugin'); ?></h1>
     
     <div class="file-explorer-toolbar">
         <div class="file-explorer-actions">
             <button type="button" id="file-explorer-create-folder" class="button button-primary">
                 <span class="material-icons">create_new_folder</span>
-                <?php _e('New Folder', 'file-explorer'); ?>
+                <?php _e('New Folder', 'frontend-file-explorer-plugin'); ?>
             </button>
             
             <button type="button" id="file-explorer-upload-files" class="button button-primary">
                 <span class="material-icons">upload_file</span>
-                <?php _e('Upload Files', 'file-explorer'); ?>
+                <?php _e('Upload Files', 'frontend-file-explorer-plugin'); ?>
             </button>
             
             <button type="button" id="file-explorer-select-media" class="button button-secondary">
                 <span class="material-icons">perm_media</span>
-                <?php _e('Add from Media Library', 'file-explorer'); ?>
+                <?php _e('Add from Media Library', 'frontend-file-explorer-plugin'); ?>
             </button>
         </div>
         
         <div class="file-explorer-breadcrumb">
-            <button type="button" id="file-explorer-home" class="button button-secondary" title="<?php _e('Home', 'file-explorer'); ?>">
+            <button type="button" id="file-explorer-home" class="button button-secondary" title="<?php _e('Home', 'frontend-file-explorer-plugin'); ?>">
                 <span class="material-icons">home</span>
             </button>
             
-            <button type="button" id="file-explorer-back" class="button button-secondary" title="<?php _e('Go Back', 'file-explorer'); ?>">
+            <button type="button" id="file-explorer-back" class="button button-secondary" title="<?php _e('Go Back', 'frontend-file-explorer-plugin'); ?>">
                 <span class="material-icons">arrow_back</span>
             </button>
             
@@ -52,18 +52,18 @@ if (!defined('ABSPATH')) {
         
         <div id="file-explorer-empty" class="file-explorer-empty" style="display: none;">
             <span class="material-icons">folder_open</span>
-            <p><?php _e('This folder is empty', 'file-explorer'); ?></p>
+            <p><?php _e('This folder is empty', 'frontend-file-explorer-plugin'); ?></p>
         </div>
         
         <div id="file-explorer-loading" class="file-explorer-loading" style="display: none;">
             <span class="spinner is-active"></span>
-            <p><?php _e('Loading...', 'file-explorer'); ?></p>
+            <p><?php _e('Loading...', 'frontend-file-explorer-plugin'); ?></p>
         </div>
     </div>
     
     <div class="file-explorer-pagination">
         <button type="button" id="file-explorer-load-more" class="button button-secondary" style="display: none;">
-            <?php _e('Load More', 'file-explorer'); ?>
+            <?php _e('Load More', 'frontend-file-explorer-plugin'); ?>
         </button>
     </div>
 
@@ -85,13 +85,13 @@ if (!defined('ABSPATH')) {
         </div>
         <div class="file-explorer-item-name">{{ data.name }}</div>
         <div class="file-explorer-item-actions">
-            <button type="button" class="file-explorer-action-open" title="<?php _e('Open', 'file-explorer'); ?>">
+            <button type="button" class="file-explorer-action-open" title="<?php _e('Open', 'frontend-file-explorer-plugin'); ?>">
                 <span class="material-icons">open_in_new</span>
             </button>
-            <button type="button" class="file-explorer-action-download-zip" title="<?php _e('Download as ZIP', 'file-explorer'); ?>">
+            <button type="button" class="file-explorer-action-download-zip" title="<?php _e('Download as ZIP', 'frontend-file-explorer-plugin'); ?>">
                 <span class="material-icons">download</span>
             </button>
-            <button type="button" class="file-explorer-action-delete" title="<?php _e('Delete', 'file-explorer'); ?>">
+            <button type="button" class="file-explorer-action-delete" title="<?php _e('Delete', 'frontend-file-explorer-plugin'); ?>">
                 <span class="material-icons">delete</span>
             </button>
         </div>
@@ -127,10 +127,10 @@ if (!defined('ABSPATH')) {
         <# } #>
         <div class="file-explorer-item-name">{{ data.name }}</div>
         <div class="file-explorer-item-actions">
-            <button type="button" class="file-explorer-action-download" title="<?php _e('Download', 'file-explorer'); ?>">
+            <button type="button" class="file-explorer-action-download" title="<?php _e('Download', 'frontend-file-explorer-plugin'); ?>">
                 <span class="material-icons">download</span>
             </button>
-            <button type="button" class="file-explorer-action-copy-link" title="<?php _e('Copy Link', 'file-explorer'); ?>">
+            <button type="button" class="file-explorer-action-copy-link" title="<?php _e('Copy Link', 'frontend-file-explorer-plugin'); ?>">
                 <span class="material-icons">link</span>
             </button>
             <button type="button" class="file-explorer-action-delete" title="<?php _e('Delete', 'file-explorer'); ?>">
@@ -144,14 +144,14 @@ if (!defined('ABSPATH')) {
 <div id="file-explorer-create-folder-modal" class="file-explorer-modal" style="display: none;">
     <div class="file-explorer-modal-content">
         <span class="file-explorer-modal-close">&times;</span>
-        <h2><?php _e('Create New Folder', 'file-explorer'); ?></h2>
+        <h2><?php _e('Create New Folder', 'frontend-file-explorer-plugin'); ?></h2>
         <div class="file-explorer-modal-body">
-            <label for="file-explorer-folder-name"><?php _e('Folder Name', 'file-explorer'); ?></label>
+            <label for="file-explorer-folder-name"><?php _e('Folder Name', 'frontend-file-explorer-plugin'); ?></label>
             <input type="text" id="file-explorer-folder-name" class="regular-text">
         </div>
         <div class="file-explorer-modal-footer">
-            <button type="button" id="file-explorer-create-folder-cancel" class="button button-secondary"><?php _e('Cancel', 'file-explorer'); ?></button>
-            <button type="button" id="file-explorer-create-folder-submit" class="button button-primary"><?php _e('Create', 'file-explorer'); ?></button>
+            <button type="button" id="file-explorer-create-folder-cancel" class="button button-secondary"><?php _e('Cancel', 'frontend-file-explorer-plugin'); ?></button>
+            <button type="button" id="file-explorer-create-folder-submit" class="button button-primary"><?php _e('Create', 'frontend-file-explorer-plugin'); ?></button>
         </div>
     </div>
 </div>
@@ -159,12 +159,12 @@ if (!defined('ABSPATH')) {
 <div id="file-explorer-upload-modal" class="file-explorer-modal" style="display: none;">
     <div class="file-explorer-modal-content">
         <span class="file-explorer-modal-close">&times;</span>
-        <h2><?php _e('Upload Files', 'file-explorer'); ?></h2>
+        <h2><?php _e('Upload Files', 'frontend-file-explorer-plugin'); ?></h2>
         <div class="file-explorer-modal-body">
             <div id="file-explorer-dropzone" class="file-explorer-dropzone">
                 <div class="file-explorer-dropzone-text">
                     <span class="material-icons">cloud_upload</span>
-                    <p><?php _e('Drag files here or click to select files', 'file-explorer'); ?></p>
+                    <p><?php _e('Drag files here or click to select files', 'frontend-file-explorer-plugin'); ?></p>
                 </div>
                 <input type="file" id="file-explorer-file-input" multiple style="display: none;">
             </div>
@@ -175,8 +175,8 @@ if (!defined('ABSPATH')) {
             <div id="file-explorer-upload-files" class="file-explorer-upload-files"></div>
         </div>
         <div class="file-explorer-modal-footer">
-            <button type="button" id="file-explorer-upload-cancel" class="button button-secondary"><?php _e('Cancel', 'file-explorer'); ?></button>
-            <button type="button" id="file-explorer-upload-submit" class="button button-primary"><?php _e('Upload', 'file-explorer'); ?></button>
+            <button type="button" id="file-explorer-upload-cancel" class="button button-secondary"><?php _e('Cancel', 'frontend-file-explorer-plugin'); ?></button>
+            <button type="button" id="file-explorer-upload-submit" class="button button-primary"><?php _e('Upload', 'frontend-file-explorer-plugin'); ?></button>
         </div>
     </div>
 </div>
