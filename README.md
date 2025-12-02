@@ -1,14 +1,14 @@
-# Frontend File Explorer Plugin
+# Frontend File Explorer
 
 <p align="center">
   <img src="https://img.shields.io/badge/WordPress-Plugin-blue?logo=wordpress" alt="WordPress badge" />
-  <img src="https://img.shields.io/badge/Tested%20on-WP%205.6%2B-green" alt="WP compatibility badge" />
+  <img src="https://img.shields.io/badge/Tested%20up%20to-6.8-green" alt="WP compatibility badge" />
   <img src="https://img.shields.io/badge/PHP-7.4%2B-8892BF?logo=php" alt="PHP version badge" />
   <img src="https://img.shields.io/badge/License-GPL%20v2%2B-orange" alt="License badge" />
 </p>
 
 <p align="center">
-  Frontend File Explorer Plugin is a modern, Windows Explorer-inspired file management experience for WordPress administrators and site visitors. The plugin adds an intuitive admin interface plus a fully responsive frontend shortcode for browsing, uploading, and sharing files stored under <code>wp-content/uploads/downloads</code>.
+  A modern, Windows Explorer–inspired file manager for WordPress with admin interface and frontend shortcode.
 </p>
 
 ---
@@ -36,14 +36,20 @@
   <img src="assets/images/backend.jpg" alt="File Explorer admin interface screenshot" width="700" />
 </p>
 
+Frontend File Explorer is a modern, Windows Explorer–inspired file manager for WordPress. It gives you a clean admin interface to organize and share files plus a responsive frontend explorer powered by a simple shortcode.
+
+Use it to create download areas for courses, client file portals, or resource libraries — without relying on heavy external file management tools.
+
+The plugin provides a seamless experience for both administrators and frontend users:
+
 | Category | Highlights |
 |----------|------------|
 | **UI/UX** | Explorer-style layout with breadcrumbs, toolbar actions, pagination, Material Icons visuals, responsive grid view. |
 | **Storage** | Auto-creates and secures `wp-content/uploads/downloads`, including `.htaccess` and `index.php`. |
 | **Permissions** | Admin actions (upload, copy, delete, ZIP) gated by `upload_files`; frontend browsing is read-only. |
-| **Performance** | AJAX navigation with server-side pagination through `File_Explorer_Ajax`. |
+| **Performance** | AJAX navigation with server-side pagination. |
 | **Sharing** | One-click ZIP downloads plus copyable public links. |
-| **Localization** | Text domain `frontend-file-explorer-plugin` ready for translation. |
+| **Localization** | Text domain `frontend-file-explorer` ready for translation. |
 
 > 💡 **Tip:** Pair the plugin with WP roles/capabilities plugins (e.g., Members) to fine-tune who can manage files.
 
@@ -63,11 +69,18 @@ The plugin relies only on WordPress core APIs plus the bundled Material Icons st
 
 ## Installation
 
-1. **Download / clone** this repository into your WordPress `wp-content/plugins/` directory.
-2. Ensure the folder is named `file-explorer` (matching the plugin header file `file-explorer.php`).
-3. Within the WordPress admin dashboard, navigate to **Plugins → Installed Plugins** and activate **File Explorer**.
-4. On activation, the plugin creates `wp-content/uploads/downloads`. Verify that your hosting environment permits file creation in `wp-content/uploads`.
-5. (Optional) Publish a page that uses the `[file_explorer]` shortcode for frontend access.
+### Installation from within WordPress
+
+1. Visit **Plugins > Add New**.
+2. Search for **Frontend File Explorer**.
+3. Install and activate the Frontend File Explorer plugin.
+4. On activation, the plugin will create `wp-content/uploads/downloads`. Make sure your hosting environment allows file creation in `wp-content/uploads`.
+
+### Manual installation
+
+1. Upload the plugin folder to the `/wp-content/plugins/` directory.
+2. Visit **Plugins**.
+3. Activate the Frontend File Explorer plugin.
 
 ## Usage
 
@@ -75,13 +88,18 @@ The plugin relies only on WordPress core APIs plus the bundled Material Icons st
 
 > 🎛️ **Dashboard experience**
 
-- Found under **File Upload** in the WordPress sidebar (`add_menu_page` in `File_Explorer::add_admin_menu`).
-- Supports creating folders, uploading files (multi-select), copying existing Media Library assets into the explorer, deleting items, downloading ZIP archives, and copying share links.
-- All actions are routed via nonce-protected AJAX endpoints defined in `includes/class-file-explorer-ajax.php`.
+- Find the menu item **File Upload** in the WordPress admin sidebar.
+- From here you can:
+  - Create folders
+  - Upload files (multi-select support)
+  - Copy existing Media Library items into the Explorer
+  - Delete files and folders
+  - Download a folder as a ZIP archive
+- All actions are handled via nonce-protected AJAX endpoints for a smoother UX.
 
 ### Frontend shortcode
 
-Embed anywhere (pages, posts, custom post types):
+Embed the explorer anywhere (pages, posts, custom post types):
 
 ```text
 [file_explorer folder="/"]
@@ -92,27 +110,28 @@ Embed anywhere (pages, posts, custom post types):
 </p>
 
 - `folder` (optional) – starting subdirectory relative to `uploads/downloads`. Use `/` for the root.
-- Visitors can browse folders, download files, grab share links, and download ZIPs. Mutating actions remain restricted to logged-in users with `upload_files` capability.
+- Visitors can browse folders, download files, and copy direct links.
+- Mutating actions (upload, delete, etc.) remain restricted to logged-in users with the `upload_files` capability.
 
 ## Project structure
 
 ```
-file-explorer.php              # Plugin bootstrap; defines constants, hooks, activation logic
+frontend-file-explorer.php              # Plugin bootstrap; defines constants, hooks, activation logic
 includes/
-  class-file-explorer.php      # Main singleton: menus, assets, shortcode, activation helpers
-  class-file-explorer-ajax.php # AJAX controller for admin + frontend requests
+  class-frontend-file-explorer.php      # Main singleton: menus, assets, shortcode, activation helpers
+  class-frontend-file-explorer-ajax.php # AJAX controller for admin + frontend requests
 assets/
-  css/, js/                    # Admin & frontend styles/scripts (Material Icons enqueued remotely)
+  css/, js/                             # Admin & frontend styles/scripts
 templates/
-  admin-interface.php          # Admin UI markup
-  frontend-interface.php       # Shortcode output template
+  frontend-file-explorer-admin.php      # Admin UI markup
+  frontend-file-explorer-shortcode.php  # Shortcode output template
 ```
 
 ## Development notes
 
-- Hooks are registered inside `File_Explorer::init_hooks()`. Extend or override behavior there when adding new features.
-- Admin and frontend scripts are localized with runtime data (`fileExplorerAdmin`, `fileExplorerFrontend`). Reuse these objects for new AJAX calls or UI strings.
-- Default options (allowed file types, upload size, pagination) are managed via `File_Explorer::set_default_options()`. Update the option keys there if adding new settings fields.
+- Hooks are registered inside `Frontend_File_Explorer::init_hooks()`. Extend or override behavior there when adding new features.
+- Admin and frontend scripts are localized with runtime data (`frontendFileExplorerAdmin`, `frontendFileExplorerFrontend`). Reuse these objects for new AJAX calls or UI strings.
+- Default options (allowed file types, upload size, pagination) are managed via `Frontend_File_Explorer::set_default_options()`. Update the option keys there if adding new settings fields.
 - AJAX methods expect sanitized paths relative to `/downloads` and reject directory traversal attempts. Preserve these checks when modifying file operations.
 
 ### Running in development
@@ -125,7 +144,7 @@ templates/
 ## Security considerations
 
 - Capability checks guard all mutating admin actions (`current_user_can( 'upload_files' )`).
-- Nonces (`wp_create_nonce( 'file_explorer_nonce' )`) are validated for every request.
+- Nonces (`wp_create_nonce( 'frontend_file_explorer_nonce' )`) are validated for every request.
 - Paths are sanitized and disallow `..` traversal before interacting with the filesystem.
 - Download directory contains `.htaccess` and `index.php` files to prevent raw listing.
 - ZIP downloads stream from server-side archives created per request, minimizing stale artifacts.
@@ -144,16 +163,16 @@ templates/
 ## FAQ
 
 **Q: Can I point the explorer to a different base folder?**  
-A: Yes—override the constants in a custom mu-plugin before File Explorer loads, or filter `FILE_EXPLORER_UPLOADS_DIR`/`URL` via `wp_loaded` hooks.
+A: Yes—override the constants in a custom mu-plugin before File Explorer loads, or filter `FILE_EXPLORER_UPLOADS_DIR`/`URL` via `wp_loaded` hooks. This is an advanced customization and should be done carefully.
 
-**Q: Does the plugin respect multisite setups?**  
-A: Each site manages its own `uploads/downloads` directory; network-activate for consistent availability.
+**Q: Does the plugin work in multisite?**  
+A: Yes. Each site manages its own `uploads/downloads` directory. You can network-activate the plugin for consistency across sites.
 
 **Q: Are file types restricted?**  
-A: Defaults mirror `allowed_file_types` option (configured during activation). Update this option to allow or ban specific extensions.
+A: By default, allowed file types are defined via options during activation. You can adjust the allowed extensions by updating the plugin options (e.g., `file_explorer_allowed_file_types`).
 
 **Q: How do I translate the UI?**  
-A: Use tools like Loco Translate or Poedit targeting the `frontend-file-explorer-plugin` text domain; drop `.mo` files under `languages/`.
+A: The plugin is fully localization-ready and uses the `frontend-file-explorer` text domain. You can use tools like Loco Translate or Poedit to create translations and drop `.mo` files in the `languages/` directory.
 
 ## Roadmap
 
@@ -168,7 +187,7 @@ Have a feature request? Open an issue describing the use case.
 
 | Version | Date | Notes |
 |---------|------|-------|
-| 1.0.1 | 2025-12-01 | Rename to Frontend File Explorer Plugin, align text domain, and improve documentation. |
+| 1.0.1 | 2025-12-03 | Rename plugin to "Frontend File Explorer", align text domain, and improve documentation. |
 | 1.0.0 | 2025-11-30 | Initial public release with admin/ frontend explorers, ZIP downloads, and AJAX tooling. |
 
 ## Contributing
@@ -181,4 +200,4 @@ Have a feature request? Open an issue describing the use case.
 
 ## License
 
-GPL v2 or later. See the plugin header in `file-explorer.php` for details.
+GPL v2 or later. See the plugin header in `frontend-file-explorer.php` for details.

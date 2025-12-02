@@ -3,12 +3,12 @@
  */
 
 /* Container */
-.file-explorer-container {
+.frontend-file-explorer-container {
     margin: 20px 0;
 }
 
 /* Toolbar */
-.file-explorer-toolbar {
+.frontend-file-explorer-toolbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -19,37 +19,37 @@
     padding: 15px;
 }
 
-.file-explorer-actions {
+.frontend-file-explorer-actions {
     display: flex;
     gap: 10px;
 }
 
-.file-explorer-actions button {
+.frontend-file-explorer-actions button {
     display: flex;
     align-items: center;
 }
 
-.file-explorer-actions button .material-icons {
+.frontend-file-explorer-actions button .material-icons {
     margin-right: 5px;
 }
 
-.file-explorer-breadcrumb {
+.frontend-file-explorer-breadcrumb {
     display: flex;
     align-items: center;
 }
 
-.file-explorer-breadcrumb button {
+.frontend-file-explorer-breadcrumb button {
     margin-right: 5px;
 }
 
-#file-explorer-current-path {
+#frontend-file-explorer-current-path {
     font-size: 14px;
     color: #555;
     margin-left: 10px;
 }
 
 /* Content */
-.file-explorer-content {
+.frontend-file-explorer-content {
     background-color: #fff;
     border-radius: 4px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -58,13 +58,13 @@
     position: relative;
 }
 
-.file-explorer-items {
+.frontend-file-explorer-items {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
     gap: 20px;
 }
 
-.file-explorer-item {
+.frontend-file-explorer-item {
     background-color: #f9f9f9;
     border-radius: 4px;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
@@ -74,12 +74,12 @@
     transition: all 0.2s ease;
 }
 
-.file-explorer-item:hover {
+.frontend-file-explorer-item:hover {
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
     transform: translateY(-2px);
 }
 
-.file-explorer-item-icon {
+.frontend-file-explorer-item-icon {
     color: #2271b1;
     font-size: 48px;
     margin-bottom: 10px;
@@ -87,13 +87,13 @@
 }
 
 /* Make folder icons larger */
-.file-explorer-item[data-type="folder"] .file-explorer-item-icon .material-icons {
+.frontend-file-explorer-item[data-type="folder"] .frontend-file-explorer-item-icon .material-icons {
     font-size: 72px;
     margin-top: -10px;
     margin-bottom: -10px;
 }
 
-.file-explorer-item-preview {
+.frontend-file-explorer-item-preview {
     height: 120px;
     margin-bottom: 10px;
     display: flex;
@@ -101,20 +101,20 @@
     justify-content: center;
 }
 
-.file-explorer-item-preview img {
+.frontend-file-explorer-item-preview img {
     max-width: 100%;
     max-height: 100%;
     object-fit: contain;
 }
 
-.file-explorer-item-name {
+.frontend-file-explorer-item-name {
     font-size: 14px;
     font-weight: 500;
     margin-bottom: 10px;
     word-break: break-word;
 }
 
-.file-explorer-item-actions {
+.frontend-file-explorer-item-actions {
     display: flex;
     justify-content: center;
     gap: 5px;
@@ -122,11 +122,11 @@
     transition: opacity 0.2s ease;
 }
 
-.file-explorer-item:hover .file-explorer-item-actions {
+.frontend-file-explorer-item:hover .frontend-file-explorer-item-actions {
     opacity: 1;
 }
 
-.file-explorer-item-actions button {
+.frontend-file-explorer-item-actions button {
     background: none;
     border: none;
     color: #2271b1;
@@ -134,16 +134,16 @@
     padding: 5px;
 }
 
-.file-explorer-item-actions button:hover {
+.frontend-file-explorer-item-actions button:hover {
     color: #135e96;
 }
 
-.file-explorer-item-actions .material-icons {
+.frontend-file-explorer-item-actions .material-icons {
     font-size: 20px;
 }
 
 /* Empty state */
-.file-explorer-empty {
+.frontend-file-explorer-empty {
     align-items: center;
     color: #888;
     display: flex;
@@ -152,13 +152,13 @@
     min-height: 300px;
 }
 
-.file-explorer-empty .material-icons {
+.frontend-file-explorer-empty .material-icons {
     font-size: 64px;
     margin-bottom: 20px;
 }
 
 /* Loading state */
-.file-explorer-loading {
+.frontend-file-explorer-loading {
     align-items: center;
     background-color: rgba(255, 255, 255, 0.8);
     display: flex;
@@ -172,18 +172,18 @@
     z-index: 10;
 }
 
-.file-explorer-loading .spinner {
+.frontend-file-explorer-loading .spinner {
     margin-bottom: 10px;
 }
 
 /* Pagination */
-.file-explorer-pagination {
+.frontend-file-explorer-pagination {
     display: flex;
     justify-content: center;
     margin-top: 20px;
 }
 
-.file-explorer-credit {
+.frontend-file-explorer-credit {
     margin-top: 30px;
     text-align: center;
     font-size: 12px;
@@ -191,7 +191,7 @@
 }
 
 /* Modal */
-.file-explorer-modal {
+.frontend-file-explorer-modal {
     background-color: rgba(0, 0, 0, 0.5);
     display: none;
     height: 100%;
@@ -202,7 +202,7 @@
     z-index: 100;
 }
 
-.file-explorer-modal-content {
+.frontend-file-explorer-modal-content {
     background-color: #fff;
     border-radius: 4px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
@@ -212,7 +212,7 @@
     position: relative;
 }
 
-.file-explorer-modal-close {
+.frontend-file-explorer-modal-close {
     color: #aaa;
     cursor: pointer;
     font-size: 28px;
@@ -222,26 +222,26 @@
     top: 10px;
 }
 
-.file-explorer-modal-close:hover {
+.frontend-file-explorer-modal-close:hover {
     color: #555;
 }
 
-.file-explorer-modal h2 {
+.frontend-file-explorer-modal h2 {
     margin-top: 0;
 }
 
-.file-explorer-modal-body {
+.frontend-file-explorer-modal-body {
     margin-bottom: 20px;
 }
 
-.file-explorer-modal-footer {
+.frontend-file-explorer-modal-footer {
     display: flex;
     justify-content: flex-end;
     gap: 10px;
 }
 
 /* Dropzone */
-.file-explorer-dropzone {
+.frontend-file-explorer-dropzone {
     border: 2px dashed #ccc;
     border-radius: 4px;
     cursor: pointer;
@@ -251,22 +251,22 @@
     transition: border-color 0.2s ease;
 }
 
-.file-explorer-dropzone:hover,
-.file-explorer-dropzone.drag-over {
+.frontend-file-explorer-dropzone:hover,
+.frontend-file-explorer-dropzone.drag-over {
     border-color: #2271b1;
 }
 
-.file-explorer-dropzone-text {
+.frontend-file-explorer-dropzone-text {
     color: #888;
 }
 
-.file-explorer-dropzone-text .material-icons {
+.frontend-file-explorer-dropzone-text .material-icons {
     font-size: 48px;
     margin-bottom: 10px;
 }
 
 /* Upload progress */
-.file-explorer-upload-progress {
+.frontend-file-explorer-upload-progress {
     background-color: #f0f0f0;
     border-radius: 4px;
     height: 20px;
@@ -275,14 +275,14 @@
     position: relative;
 }
 
-.file-explorer-upload-progress-bar {
+.frontend-file-explorer-upload-progress-bar {
     background-color: #2271b1;
     height: 100%;
     transition: width 0.3s ease;
     width: 0;
 }
 
-.file-explorer-upload-progress-text {
+.frontend-file-explorer-upload-progress-text {
     color: #fff;
     font-size: 12px;
     font-weight: bold;
@@ -293,7 +293,7 @@
     transform: translate(-50%, -50%);
 }
 
-.file-explorer-upload-files {
+.frontend-file-explorer-upload-files {
     max-height: 200px;
     overflow-y: auto;
 }
@@ -327,50 +327,50 @@
 
 /* Responsive */
 @media (max-width: 782px) {
-    .file-explorer-toolbar {
+    .frontend-file-explorer-toolbar {
         flex-direction: column;
         gap: 15px;
     }
     
-    .file-explorer-actions {
+    .frontend-file-explorer-actions {
         width: 100%;
         justify-content: space-between;
     }
     
-    .file-explorer-breadcrumb {
+    .frontend-file-explorer-breadcrumb {
         width: 100%;
     }
     
-    .file-explorer-items {
+    .frontend-file-explorer-items {
         grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
         gap: 15px;
     }
     
-    .file-explorer-modal-content {
+    .frontend-file-explorer-modal-content {
         margin: 20% auto;
         max-width: 90%;
     }
 }
 
 @media (max-width: 480px) {
-    .file-explorer-items {
+    .frontend-file-explorer-items {
         grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
         gap: 10px;
     }
     
-    .file-explorer-item {
+    .frontend-file-explorer-item {
         padding: 10px;
     }
     
-    .file-explorer-item-icon {
+    .frontend-file-explorer-item-icon {
         font-size: 36px;
     }
     
-    .file-explorer-item-preview {
+    .frontend-file-explorer-item-preview {
         height: 80px;
     }
     
-    .file-explorer-item-name {
+    .frontend-file-explorer-item-name {
         font-size: 12px;
     }
 }
