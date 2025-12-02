@@ -102,7 +102,7 @@ The plugin relies only on WordPress core APIs plus the bundled Material Icons st
 Embed the explorer anywhere (pages, posts, custom post types):
 
 ```text
-[file_explorer folder="/"]
+[frontend_file_explorer folder="/"]
 ```
 
 <p align="center">
@@ -187,6 +187,7 @@ Have a feature request? Open an issue describing the use case.
 
 | Version | Date | Notes |
 |---------|------|-------|
+| 1.0.0 → 1.0.1 | 2025-12-03 | Fixed admin template conditional statements showing as plain text by rewriting the custom template function to use explicit if-else logic for file/folder templates. Added AJAX handler instantiation to ensure proper functionality. |
 | 1.0.1 | 2025-12-03 | Rename plugin to "Frontend File Explorer", align text domain, and improve documentation. |
 | 1.0.0 | 2025-11-30 | Initial public release with admin/ frontend explorers, ZIP downloads, and AJAX tooling. |
 

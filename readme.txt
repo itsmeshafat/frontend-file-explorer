@@ -20,14 +20,14 @@ The plugin provides a seamless experience for both administrators and frontend u
 * **Explorer-style UI:** Navigate with breadcrumbs, toolbar actions, pagination, and Material Icons.
 * **Dedicated Directory:** Files are stored in a secured `wp-content/uploads/downloads` directory.
 * **Admin Management:** Create folders, upload files, delete items, and download ZIPs directly from the admin dashboard.
-* **Frontend Integration:** Embed the explorer anywhere using the `[file_explorer]` shortcode.
+* Frontend Integration: Embed the explorer anywhere using the `[frontend_file_explorer]` shortcode.
 * **AJAX-Powered:** Fast, smooth navigation and pagination without page reloads.
 * **Translation Ready:** Fully localized with the `frontend-file-explorer` text domain.
 
 The explorer can be used via the Admin interface or the Frontend shortcode:
 
 * **Admin interface:** Find the menu item **File Upload** in the WordPress admin sidebar. From here you can create folders, upload files (multi-select support), copy existing Media Library items, delete files/folders, and download folders as ZIP archives.
-* **Frontend explorer:** Embed the explorer anywhere (pages, posts, custom post types) using the shortcode `[file_explorer folder="/"]`.
+* **Frontend explorer:** Embed the explorer anywhere (pages, posts, custom post types) using the shortcode `[frontend_file_explorer folder="/"]`.
     * `folder` (optional) — starting subdirectory relative to `uploads/downloads`. Use `/` for the root.
     * Visitors can browse folders, download files, and copy direct links.
     * Mutating actions (upload, delete, etc.) remain restricted to logged-in users with the `upload_files` capability.

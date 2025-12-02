@@ -65,3 +65,8 @@ register_deactivation_hook(__FILE__, 'frontend_file_explorer_deactivate');
 
 // Initialize the plugin
 add_action('plugins_loaded', 'frontend_file_explorer');
+
+// Initialize AJAX handlers
+add_action('plugins_loaded', function() {
+    new Frontend_File_Explorer_Ajax();
+});

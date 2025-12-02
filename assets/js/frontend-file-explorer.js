@@ -14,12 +14,12 @@
             this.isLoading = false;
 
             // DOM elements
-            this.$container = $('.file-explorer-frontend-container');
-            this.$items = $('#file-explorer-frontend-items');
-            this.$empty = $('#file-explorer-frontend-empty');
-            this.$loading = $('#file-explorer-frontend-loading');
-            this.$currentPath = $('#file-explorer-frontend-current-path');
-            this.$loadMore = $('#file-explorer-frontend-load-more');
+            this.$container = $('.frontend-file-explorer-frontend-container');
+            this.$items = $('#frontend-file-explorer-frontend-items');
+            this.$empty = $('#frontend-file-explorer-frontend-empty');
+            this.$loading = $('#frontend-file-explorer-frontend-loading');
+            this.$currentPath = $('#frontend-file-explorer-frontend-current-path');
+            this.$loadMore = $('#frontend-file-explorer-frontend-load-more');
 
             // Custom template function instead of wp.template
             this.folderTemplate = this.createTemplateFunction('tmpl-file-explorer-frontend-folder');
@@ -101,21 +101,21 @@
          */
         bindEvents() {
             // Navigation
-            $('#file-explorer-frontend-home').on('click', this.navigateHome.bind(this));
-            $('#file-explorer-frontend-back').on('click', this.navigateBack.bind(this));
+            $('#frontend-file-explorer-frontend-home').on('click', this.navigateHome.bind(this));
+            $('#frontend-file-explorer-frontend-back').on('click', this.navigateBack.bind(this));
 
             // Load more
             this.$loadMore.on('click', this.loadMoreItems.bind(this));
 
             // Download current folder as ZIP
-            $('#file-explorer-frontend-download-zip').on('click', this.handleCurrentFolderDownloadZip.bind(this));
+            $('#frontend-file-explorer-frontend-download-zip').on('click', this.handleCurrentFolderDownloadZip.bind(this));
 
             // Item click events (delegation)
-            this.$items.on('click', '.file-explorer-folder', this.handleFolderClick.bind(this));
-            this.$items.on('click', '.file-explorer-action-open', this.handleOpenClick.bind(this));
-            this.$items.on('click', '.file-explorer-action-download-zip', this.handleDownloadZipClick.bind(this));
-            this.$items.on('click', '.file-explorer-action-download', this.handleDownloadClick.bind(this));
-            this.$items.on('click', '.file-explorer-action-copy-link', this.handleCopyLinkClick.bind(this));
+            this.$items.on('click', '.frontend-file-explorer-folder', this.handleFolderClick.bind(this));
+            this.$items.on('click', '.frontend-file-explorer-action-open', this.handleOpenClick.bind(this));
+            this.$items.on('click', '.frontend-file-explorer-action-download-zip', this.handleDownloadZipClick.bind(this));
+            this.$items.on('click', '.frontend-file-explorer-action-download', this.handleDownloadClick.bind(this));
+            this.$items.on('click', '.frontend-file-explorer-action-copy-link', this.handleCopyLinkClick.bind(this));
         }
 
         /**
@@ -410,7 +410,7 @@
     $(document).ready(function () {
         console.log('File Explorer Frontend initializing...');
         try {
-            new FileExplorerFrontend();
+            new FrontendFileExplorerFrontend();
             console.log('File Explorer Frontend initialized successfully');
         } catch (error) {
             console.error('Error initializing File Explorer Frontend:', error);

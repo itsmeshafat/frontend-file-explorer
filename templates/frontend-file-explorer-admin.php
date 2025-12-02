@@ -78,7 +78,7 @@ if (!defined('ABSPATH')) {
 </div>
 
 <!-- Templates -->
-<script type="text/html" id="tmpl-file-explorer-folder">
+<script type="text/html" id="tmpl-frontend-file-explorer-folder">
     <div class="frontend-file-explorer-item frontend-file-explorer-folder" data-path="{{ data.path }}" data-type="folder">
         <div class="frontend-file-explorer-item-icon">
             <span class="material-icons">folder</span>
@@ -98,7 +98,7 @@ if (!defined('ABSPATH')) {
     </div>
 </script>
 
-<script type="text/html" id="tmpl-file-explorer-file">
+<script type="text/html" id="tmpl-frontend-file-explorer-file">
     <div class="frontend-file-explorer-item frontend-file-explorer-file" data-path="{{ data.path }}" data-type="file">
         <# if (data.extension === 'jpg' || data.extension === 'jpeg' || data.extension === 'png' || data.extension === 'gif') { #>
             <div class="frontend-file-explorer-item-preview">

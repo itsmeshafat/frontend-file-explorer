@@ -22,9 +22,9 @@
             this.$currentPath = $('#frontend-file-explorer-current-path');
             this.$loadMore = $('#frontend-file-explorer-load-more');
 
-            // Templates
-            this.folderTemplate = wp.template('tmpl-frontend-file-explorer-folder');
-            this.fileTemplate = wp.template('tmpl-frontend-file-explorer-file');
+            // Templates will be initialized after DOM is ready
+            this.folderTemplate = null;
+            this.fileTemplate = null;
 
             // Initialize
             this.init();
@@ -34,8 +34,108 @@
          * Initialize
          */
         init() {
+            // Initialize templates after DOM is ready using custom template function
+            this.folderTemplate = this.createTemplateFunction('tmpl-frontend-file-explorer-folder');
+            this.fileTemplate = this.createTemplateFunction('tmpl-frontend-file-explorer-file');
+            
+            // Templates initialized successfully
+            
             this.bindEvents();
             this.loadItems();
+        }
+
+        /**
+         * Create a template function similar to wp.template
+         */
+        createTemplateFunction(templateId) {
+            const templateElement = document.getElementById(templateId);
+            if (!templateElement) {
+                console.error('Template not found:', templateId);
+                return data => '';
+            }
+
+            // Special handling for file template with conditional logic
+            if (templateId === 'tmpl-frontend-file-explorer-file') {
+                return function (data) {
+                    let iconHtml = '';
+                    
+                    // Handle file icon based on extension
+                    if (data.extension === 'jpg' || data.extension === 'jpeg' || data.extension === 'png' || data.extension === 'gif') {
+                        iconHtml = `<div class="frontend-file-explorer-item-preview">
+                            <img src="${data.url || ''}" alt="${data.name || ''}">
+                        </div>`;
+                    } else if (data.extension === 'pdf') {
+                        iconHtml = `<div class="frontend-file-explorer-item-icon">
+                            <span class="material-icons">picture_as_pdf</span>
+                        </div>`;
+                    } else if (data.extension === 'doc' || data.extension === 'docx') {
+                        iconHtml = `<div class="frontend-file-explorer-item-icon">
+                            <span class="material-icons">description</span>
+                        </div>`;
+                    } else if (data.extension === 'xls' || data.extension === 'xlsx') {
+                        iconHtml = `<div class="frontend-file-explorer-item-icon">
+                            <span class="material-icons">table_chart</span>
+                        </div>`;
+                    } else if (data.extension === 'zip' || data.extension === 'rar') {
+                        iconHtml = `<div class="frontend-file-explorer-item-icon">
+                            <span class="material-icons">folder_zip</span>
+                        </div>`;
+                    } else {
+                        iconHtml = `<div class="frontend-file-explorer-item-icon">
+                            <span class="material-icons">insert_drive_file</span>
+                        </div>`;
+                    }
+                    
+                    return `<div class="frontend-file-explorer-item frontend-file-explorer-file" data-path="${data.path || ''}" data-type="file">
+                        ${iconHtml}
+                        <div class="frontend-file-explorer-item-name">${data.name || ''}</div>
+                        <div class="frontend-file-explorer-item-actions">
+                            <button type="button" class="frontend-file-explorer-action-download" title="Download">
+                                <span class="material-icons">download</span>
+                            </button>
+                            <button type="button" class="frontend-file-explorer-action-copy-link" title="Copy Link">
+                                <span class="material-icons">link</span>
+                            </button>
+                            <button type="button" class="frontend-file-explorer-action-delete" title="Delete">
+                                <span class="material-icons">delete</span>
+                            </button>
+                        </div>
+                    </div>`;
+                };
+            }
+            
+            // For folder template, use simple replacement
+            if (templateId === 'tmpl-frontend-file-explorer-folder') {
+                return function (data) {
+                    return `<div class="frontend-file-explorer-item frontend-file-explorer-folder" data-path="${data.path || ''}" data-type="folder">
+                        <div class="frontend-file-explorer-item-icon">
+                            <span class="material-icons">folder</span>
+                        </div>
+                        <div class="frontend-file-explorer-item-name">${data.name || ''}</div>
+                        <div class="frontend-file-explorer-item-actions">
+                            <button type="button" class="frontend-file-explorer-action-open" title="Open">
+                                <span class="material-icons">open_in_new</span>
+                            </button>
+                            <button type="button" class="frontend-file-explorer-action-download-zip" title="Download as ZIP">
+                                <span class="material-icons">download</span>
+                            </button>
+                            <button type="button" class="frontend-file-explorer-action-delete" title="Delete">
+                                <span class="material-icons">delete</span>
+                            </button>
+                        </div>
+                    </div>`;
+                };
+            }
+
+            // Fallback for any other templates
+            const templateString = templateElement.innerHTML;
+            return function (data) {
+                let html = templateString;
+                html = html.replace(/\{\{\s*data\.(\w+)\s*\}\}/g, (match, key) => {
+                    return data[key] || '';
+                });
+                return html;
+            };
         }
 
         /**
@@ -158,9 +258,19 @@
                 let html = '';
 
                 if (item.type === 'folder') {
-                    html = this.folderTemplate(item);
+                    if (this.folderTemplate) {
+                        html = this.folderTemplate(item);
+                    } else {
+                        console.error('Folder template not initialized');
+                        return;
+                    }
                 } else {
-                    html = this.fileTemplate(item);
+                    if (this.fileTemplate) {
+                        html = this.fileTemplate(item);
+                    } else {
+                        console.error('File template not initialized');
+                        return;
+                    }
                 }
 
                 this.$items.append(html);
