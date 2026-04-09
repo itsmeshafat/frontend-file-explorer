@@ -150,6 +150,7 @@ class FrontendFileExplorerAjax {
      * Process get folder contents
      */
     private function process_get_folder_contents() {
+        // phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce verified in calling public methods get_folder_contents() and frontend_get_folder_contents()
         $folder_path = isset($_POST['path']) ? sanitize_text_field(wp_unslash($_POST['path'])) : '/';
 
         $upload_dir = wp_upload_dir();
@@ -270,6 +271,7 @@ class FrontendFileExplorerAjax {
         $this->ensure_wp_filesystem();
         global $wp_filesystem;
 
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- $_FILES cannot be sanitized as a whole; individual file data is validated by wp_handle_upload()
         $uploaded_files = isset($_FILES['files']) ? $_FILES['files'] : null;
 
         $allowed_mimes = $this->get_allowed_mime_types();
@@ -420,6 +422,7 @@ class FrontendFileExplorerAjax {
      * Process download as ZIP
      */
     private function process_download_as_zip() {
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- nonce verified in calling public methods download_as_zip() and frontend_download_as_zip()
         $folder_path = isset($_REQUEST['path']) ? sanitize_text_field(wp_unslash($_REQUEST['path'])) : '';
 
         if (empty($folder_path)) {
@@ -515,6 +518,7 @@ class FrontendFileExplorerAjax {
      * Process get file link
      */
     private function process_get_file_link() {
+        // phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce verified in calling public methods get_file_link() and frontend_get_file_link()
         $path = isset($_POST['path']) ? sanitize_text_field(wp_unslash($_POST['path'])) : '';
 
         if (empty($path)) {
