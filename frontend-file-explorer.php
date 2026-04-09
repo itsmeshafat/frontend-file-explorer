@@ -7,6 +7,7 @@
  * Author: Shafat Mahmud Khan
  * Author URI: https://itsmeshafat.com
  * Text Domain: frontend-file-explorer
+ * Domain Path: /languages
  * License: GPL v2 or later
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  */
@@ -36,15 +37,15 @@ require_once FRONTEND_FILE_EXPLORER_PLUGIN_DIR . 'includes/class-frontend-file-e
  * @since 1.0.0
  * @return FrontendFileExplorer
  */
-function FrontendFileExplorer() {
+function frontend_file_explorer_instance() {
     return FrontendFileExplorer::instance();
 }
 
 /**
  * Plugin activation function
  */
-function FrontendFileExplorer_activate() {
-    $instance = FrontendFileExplorer();
+function frontend_file_explorer_activate() {
+    $instance = frontend_file_explorer_instance();
     $instance->activate();
     
     // Flush rewrite rules
@@ -54,17 +55,17 @@ function FrontendFileExplorer_activate() {
 /**
  * Plugin deactivation function
  */
-function FrontendFileExplorer_deactivate() {
+function frontend_file_explorer_deactivate() {
     // Flush rewrite rules
     flush_rewrite_rules();
 }
 
 // Register activation and deactivation hooks
-register_activation_hook(__FILE__, 'FrontendFileExplorer_activate');
-register_deactivation_hook(__FILE__, 'FrontendFileExplorer_deactivate');
+register_activation_hook(__FILE__, 'frontend_file_explorer_activate');
+register_deactivation_hook(__FILE__, 'frontend_file_explorer_deactivate');
 
 // Initialize the plugin
-add_action('plugins_loaded', 'FrontendFileExplorer', 5);
+add_action('plugins_loaded', 'frontend_file_explorer_instance', 5);
 
 // Initialize AJAX handlers
 add_action('plugins_loaded', function() {

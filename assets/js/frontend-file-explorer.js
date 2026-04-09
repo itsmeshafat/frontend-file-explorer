@@ -1,19 +1,16 @@
 /**
- * File Explorer Frontend JavaScript — engineered by Shafat Mahmud Khan (WordPress Developer, https://itsmeshafat.com)
+ * File Explorer Frontend JavaScript
  */
 (function ($) {
     'use strict';
 
-    // Frontend File Explorer Frontend class
     class FrontendFileExplorerFrontend {
         constructor() {
-            // Properties
             this.currentPath = frontendFileExplorerFrontendConfig.folder || '/';
             this.currentPage = 1;
             this.hasMoreItems = false;
             this.isLoading = false;
 
-            // DOM elements
             this.$container = $('.frontend-file-explorer-frontend-container');
             this.$items = $('#frontend-file-explorer-frontend-items');
             this.$empty = $('#frontend-file-explorer-frontend-empty');
@@ -21,93 +18,25 @@
             this.$currentPath = $('#frontend-file-explorer-frontend-current-path');
             this.$loadMore = $('#frontend-file-explorer-frontend-load-more');
 
-            // Custom template function instead of wp.template
-            this.folderTemplate = this.createTemplateFunction('tmpl-file-explorer-frontend-folder');
-            this.fileTemplate = this.createTemplateFunction('tmpl-file-explorer-frontend-file');
+            this.folderTemplate = wp.template('file-explorer-frontend-folder');
+            this.fileTemplate = wp.template('file-explorer-frontend-file');
 
-            // Initialize
             this.init();
         }
 
-        /**
-         * Initialize
-         */
         init() {
             this.bindEvents();
             this.loadItems();
         }
 
-        /**
-         * Create a template function similar to wp.template
-         */
-        createTemplateFunction(templateId) {
-            const templateElement = document.getElementById(templateId);
-            if (!templateElement) {
-                return data => '';
-            }
-
-            const templateString = templateElement.innerHTML;
-
-            return function (data) {
-                let html = templateString;
-
-                // Replace {{ data.xxx }} with actual data
-                html = html.replace(/\{\{\s*data\.(\w+)\s*\}\}/g, (match, key) => {
-                    return data[key] || '';
-                });
-
-                // Handle conditionals <# if (condition) { #> content <# } #>
-                html = html.replace(/\<\#\s*if\s*\((.+?)\)\s*\{\s*\#\>([\s\S]*?)\<\#\s*\}\s*\#\>/g, (match, condition, content) => {
-                    // Replace data.xxx with actual data in the condition
-                    const processedCondition = condition.replace(/data\.(\w+)/g, (match, key) => {
-                        return `"${data[key] || ''}"`;
-                    });
-
-                    try {
-                        return eval(processedCondition) ? content : '';
-                    } catch (e) {
-                        return '';
-                    }
-                });
-
-                // Handle else if <# } else if (condition) { #>
-                html = html.replace(/\<\#\s*\}\s*else\s*if\s*\((.+?)\)\s*\{\s*\#\>([\s\S]*?)/g, (match, condition, content) => {
-                    // Replace data.xxx with actual data in the condition
-                    const processedCondition = condition.replace(/data\.(\w+)/g, (match, key) => {
-                        return `"${data[key] || ''}"`;
-                    });
-
-                    try {
-                        return eval(processedCondition) ? content : '';
-                    } catch (e) {
-                        return '';
-                    }
-                });
-
-                // Handle else <# } else { #>
-                html = html.replace(/\<\#\s*\}\s*else\s*\{\s*\#\>([\s\S]*?)/g, (match, content) => {
-                    return content;
-                });
-
-                return html;
-            };
-        }
-
-        /**
-         * Bind events
-         */
         bindEvents() {
-            // Navigation
             $('#frontend-file-explorer-frontend-home').on('click', this.navigateHome.bind(this));
             $('#frontend-file-explorer-frontend-back').on('click', this.navigateBack.bind(this));
 
-            // Load more
             this.$loadMore.on('click', this.loadMoreItems.bind(this));
 
-            // Download current folder as ZIP
             $('#frontend-file-explorer-frontend-download-zip').on('click', this.handleCurrentFolderDownloadZip.bind(this));
 
-            // Item click events (delegation)
             this.$items.on('click', '.frontend-file-explorer-folder', this.handleFolderClick.bind(this));
             this.$items.on('click', '.frontend-file-explorer-action-open', this.handleOpenClick.bind(this));
             this.$items.on('click', '.frontend-file-explorer-action-download-zip', this.handleDownloadZipClick.bind(this));
@@ -115,9 +44,6 @@
             this.$items.on('click', '.frontend-file-explorer-action-copy-link', this.handleCopyLinkClick.bind(this));
         }
 
-        /**
-         * Load items
-         */
         loadItems() {
             if (this.isLoading) return;
 
@@ -153,15 +79,12 @@
             });
         }
 
-        /**
-         * Render items
-         */
-        renderItems(data, append = false) {
+        renderItems(data, append) {
             if (!append) {
                 this.$items.empty();
             }
 
-            const items = data.items || [];
+            var items = data.items || [];
 
             if (items.length === 0 && !append) {
                 this.$items.hide();
@@ -173,7 +96,7 @@
             this.$empty.hide();
 
             items.forEach((item) => {
-                let html = '';
+                var html = '';
 
                 if (item.type === 'folder') {
                     html = this.folderTemplate(item);
@@ -185,9 +108,6 @@
             });
         }
 
-        /**
-         * Load more items
-         */
         loadMoreItems() {
             if (this.isLoading || !this.hasMoreItems) return;
 
@@ -195,22 +115,16 @@
             this.loadItems();
         }
 
-        /**
-         * Navigate home
-         */
         navigateHome() {
             this.currentPath = '/';
             this.currentPage = 1;
             this.loadItems();
         }
 
-        /**
-         * Navigate back
-         */
         navigateBack() {
             if (this.currentPath === '/') return;
 
-            const parts = this.currentPath.split('/').filter(Boolean);
+            var parts = this.currentPath.split('/').filter(Boolean);
             parts.pop();
 
             this.currentPath = parts.length ? '/' + parts.join('/') : '/';
@@ -218,46 +132,29 @@
             this.loadItems();
         }
 
-        /**
-         * Update path
-         */
         updatePath(path) {
             this.currentPath = path;
             this.$currentPath.text(path);
 
-            // Show the download ZIP button only when we're not at the root
             $('#frontend-file-explorer-frontend-download-zip').toggle(path !== '/');
         }
 
-        /**
-         * Show loading
-         */
         showLoading(show) {
             this.$loading.toggle(show);
         }
 
-        /**
-         * Show error
-         */
         showError(message) {
             this.showNotification(message, 'error');
         }
 
-        /**
-         * Show success
-         */
         showSuccess(message) {
             this.showNotification(message, 'success');
         }
 
-        /**
-         * Show notification
-         */
-        showNotification(message, type = 'info') {
-            // Remove any existing notifications
+        showNotification(message, type) {
             $('.frontend-file-explorer-notification').remove();
 
-            const $notification = $('<div class="frontend-file-explorer-notification ' + type + '">' + message + '</div>');
+            var $notification = $('<div class="frontend-file-explorer-notification ' + type + '">' + $('<div>').text(message).html() + '</div>');
             $('body').append($notification);
 
             setTimeout(() => {
@@ -267,32 +164,26 @@
             }, 3000);
         }
 
-        /**
-         * Handle folder click
-         */
         handleFolderClick(e) {
             if ($(e.target).closest('.frontend-file-explorer-item-actions').length) {
                 return;
             }
 
-            const $folder = $(e.currentTarget);
-            const path = $folder.data('path');
+            var $folder = $(e.currentTarget);
+            var path = $folder.data('path');
 
             this.currentPath = path;
             this.currentPage = 1;
             this.loadItems();
         }
 
-        /**
-         * Handle open click
-         */
         handleOpenClick(e) {
             e.preventDefault();
             e.stopPropagation();
 
-            const $item = $(e.target).closest('.frontend-file-explorer-item');
-            const path = $item.data('path');
-            const type = $item.data('type');
+            var $item = $(e.target).closest('.frontend-file-explorer-item');
+            var path = $item.data('path');
+            var type = $item.data('type');
 
             if (type === 'folder') {
                 this.currentPath = path;
@@ -301,54 +192,50 @@
             }
         }
 
-        /**
-         * Handle download zip click
-         */
         handleDownloadZipClick(e) {
             e.preventDefault();
             e.stopPropagation();
 
-            const $item = $(e.target).closest('.frontend-file-explorer-item');
-            const path = $item.data('path');
+            var $item = $(e.target).closest('.frontend-file-explorer-item');
+            var path = String($item.data('path') || '');
 
-            // Open download in new tab
+            if (!path || path.indexOf('..') !== -1) return;
+
             window.open(
                 frontendFileExplorerFrontendConfig.ajaxUrl +
                 '?action=frontend_file_explorer_frontend_download_as_zip' +
-                '&nonce=' + frontendFileExplorerFrontendConfig.nonce +
+                '&nonce=' + encodeURIComponent(frontendFileExplorerFrontendConfig.nonce) +
                 '&path=' + encodeURIComponent(path),
                 '_blank'
             );
         }
 
-        /**
-         * Handle current folder download as ZIP
-         */
         handleCurrentFolderDownloadZip(e) {
             e.preventDefault();
 
-            // Open download in new tab
+            var path = String(this.currentPath || '');
+
+            if (!path || path.indexOf('..') !== -1) return;
+
             window.open(
                 frontendFileExplorerFrontendConfig.ajaxUrl +
                 '?action=frontend_file_explorer_frontend_download_as_zip' +
-                '&nonce=' + frontendFileExplorerFrontendConfig.nonce +
-                '&path=' + encodeURIComponent(this.currentPath),
+                '&nonce=' + encodeURIComponent(frontendFileExplorerFrontendConfig.nonce) +
+                '&path=' + encodeURIComponent(path),
                 '_blank'
             );
         }
 
-        /**
-         * Handle download click
-         */
         handleDownloadClick(e) {
             e.preventDefault();
             e.stopPropagation();
 
-            const $item = $(e.target).closest('.frontend-file-explorer-item');
-            const path = $item.data('path');
+            var $item = $(e.target).closest('.frontend-file-explorer-item');
+            var path = String($item.data('path') || '');
 
-            // Create a temporary link and click it
-            const link = document.createElement('a');
+            if (!path || path.indexOf('..') !== -1) return;
+
+            var link = document.createElement('a');
             link.href = frontendFileExplorerFrontendConfig.uploadsUrl + path;
             link.download = path.split('/').pop();
             link.target = '_blank';
@@ -357,15 +244,12 @@
             document.body.removeChild(link);
         }
 
-        /**
-         * Handle copy link click
-         */
         handleCopyLinkClick(e) {
             e.preventDefault();
             e.stopPropagation();
 
-            const $item = $(e.target).closest('.frontend-file-explorer-item');
-            const path = $item.data('path');
+            var $item = $(e.target).closest('.frontend-file-explorer-item');
+            var path = $item.data('path');
 
             $.ajax({
                 url: frontendFileExplorerFrontendConfig.ajaxUrl,
@@ -377,15 +261,19 @@
                 },
                 success: (response) => {
                     if (response.success) {
-                        // Copy to clipboard
-                        const tempInput = document.createElement('input');
-                        document.body.appendChild(tempInput);
-                        tempInput.value = response.data;
-                        tempInput.select();
-                        document.execCommand('copy');
-                        document.body.removeChild(tempInput);
-
-                        this.showSuccess(frontendFileExplorerFrontendConfig.strings.copySuccess);
+                        if (navigator.clipboard && navigator.clipboard.writeText) {
+                            navigator.clipboard.writeText(response.data).then(() => {
+                                this.showSuccess(frontendFileExplorerFrontendConfig.strings.copySuccess);
+                            });
+                        } else {
+                            var tempInput = document.createElement('input');
+                            document.body.appendChild(tempInput);
+                            tempInput.value = response.data;
+                            tempInput.select();
+                            document.execCommand('copy');
+                            document.body.removeChild(tempInput);
+                            this.showSuccess(frontendFileExplorerFrontendConfig.strings.copySuccess);
+                        }
                     } else {
                         this.showError(response.data);
                     }
@@ -397,7 +285,6 @@
         }
     }
 
-    // Initialize when document is ready
     $(document).ready(function () {
         new FrontendFileExplorerFrontend();
     });

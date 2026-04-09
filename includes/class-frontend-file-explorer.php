@@ -12,7 +12,7 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Main plugin class — crafted by Shafat Mahmud Khan (WordPress Developer, https://itsmeshafat.com)
+ * Main plugin class
  */
 class FrontendFileExplorer {
 
@@ -27,11 +27,9 @@ class FrontendFileExplorer {
     /**
      * Main FrontendFileExplorer Instance.
      *
-     * Ensures only one instance of FrontendFileExplorer is loaded or can be loaded.
-     *
      * @since 1.0.0
      * @static
-     * @return FrontendFileExplorer - Main instance.
+     * @return FrontendFileExplorer
      */
     public static function instance() {
         if (is_null(self::$_instance)) {
@@ -44,42 +42,41 @@ class FrontendFileExplorer {
      * Constructor.
      */
     public function __construct() {
-        $this->define_constants();
         $this->init_hooks();
-    }
-
-    /**
-     * Define constants
-     */
-    private function define_constants() {
-        // No additional constants needed here as they're defined in the main plugin file
     }
 
     /**
      * Initialize hooks
      */
     private function init_hooks() {
-        // Admin menu
+        add_action('init', array($this, 'load_textdomain'));
+
         add_action('admin_menu', array($this, 'add_admin_menu'));
-        
-        // Enqueue scripts and styles
+
         add_action('admin_enqueue_scripts', array($this, 'admin_enqueue_scripts'));
-        
-        // Register shortcode
+
         add_shortcode('frontend_file_explorer', array($this, 'frontend_file_explorer_shortcode'));
+    }
+
+    /**
+     * Load plugin textdomain
+     */
+    public function load_textdomain() {
+        load_plugin_textdomain(
+            'frontend-file-explorer',
+            false,
+            dirname(FRONTEND_FILE_EXPLORER_PLUGIN_BASENAME) . '/languages/'
+        );
     }
 
     /**
      * Plugin activation
      */
     public function activate() {
-        // Create downloads directory
         $this->create_downloads_directory();
-        
-        // Set default options
+
         $this->set_default_options();
-        
-        // Flush rewrite rules
+
         flush_rewrite_rules();
     }
 
@@ -87,7 +84,6 @@ class FrontendFileExplorer {
      * Plugin deactivation
      */
     public function deactivate() {
-        // Flush rewrite rules
         flush_rewrite_rules();
     }
 
@@ -95,23 +91,26 @@ class FrontendFileExplorer {
      * Create downloads directory
      */
     private function create_downloads_directory() {
-        if (!file_exists(FRONTEND_FILE_EXPLORER_UPLOADS_DIR)) {
+        require_once ABSPATH . 'wp-admin/includes/file.php';
+        global $wp_filesystem;
+        if (empty($wp_filesystem)) {
+            WP_Filesystem();
+        }
+
+        if (!$wp_filesystem->exists(FRONTEND_FILE_EXPLORER_UPLOADS_DIR)) {
             wp_mkdir_p(FRONTEND_FILE_EXPLORER_UPLOADS_DIR);
-            
-            // Create .htaccess to prevent directory listing but allow file access
+
             $htaccess_content = "Options -Indexes\n";
             $htaccess_content .= "<IfModule mod_rewrite.c>\n";
             $htaccess_content .= "RewriteEngine On\n";
-            $htaccess_content .= "# Only block directory listing, allow file access\n";
             $htaccess_content .= "RewriteCond %{REQUEST_FILENAME} -d\n";
             $htaccess_content .= "RewriteCond %{REQUEST_FILENAME} !-f\n";
             $htaccess_content .= "RewriteRule . - [F,L]\n";
             $htaccess_content .= "</IfModule>";
-            
-            file_put_contents(FRONTEND_FILE_EXPLORER_UPLOADS_DIR . '/.htaccess', $htaccess_content);
-            
-            // Create index.php to prevent directory listing
-            file_put_contents(FRONTEND_FILE_EXPLORER_UPLOADS_DIR . '/index.php', '<?php // Silence is golden');
+
+            $wp_filesystem->put_contents(FRONTEND_FILE_EXPLORER_UPLOADS_DIR . '/.htaccess', $htaccess_content, FS_CHMOD_FILE);
+
+            $wp_filesystem->put_contents(FRONTEND_FILE_EXPLORER_UPLOADS_DIR . '/index.php', '<?php // Silence is golden', FS_CHMOD_FILE);
         }
     }
 
@@ -162,15 +161,13 @@ class FrontendFileExplorer {
             return;
         }
 
-        // Enqueue Material Design Icons
         wp_enqueue_style(
-            'material-icons',
-            'https://fonts.googleapis.com/icon?family=Material+Icons',
+            'frontend-file-explorer-material-icons',
+            FRONTEND_FILE_EXPLORER_PLUGIN_URL . 'assets/css/material-icons.css',
             array(),
             FRONTEND_FILE_EXPLORER_VERSION
         );
 
-        // Enqueue plugin styles
         wp_enqueue_style(
             'frontend-file-explorer-admin-style',
             FRONTEND_FILE_EXPLORER_PLUGIN_URL . 'assets/css/frontend-file-explorer-admin.css',
@@ -178,16 +175,14 @@ class FrontendFileExplorer {
             FRONTEND_FILE_EXPLORER_VERSION
         );
 
-        // Enqueue plugin scripts
         wp_enqueue_script(
             'frontend-file-explorer-admin-script',
             FRONTEND_FILE_EXPLORER_PLUGIN_URL . 'assets/js/frontend-file-explorer-admin.js',
-            array('jquery'),
+            array('jquery', 'wp-util'),
             FRONTEND_FILE_EXPLORER_VERSION,
             true
         );
 
-        // Localize script
         wp_localize_script('frontend-file-explorer-admin-script', 'frontendFileExplorerAdminConfig', array(
             'ajaxUrl' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('frontend_file_explorer_nonce'),
@@ -215,7 +210,6 @@ class FrontendFileExplorer {
             )
         ));
 
-        // Enqueue WordPress Media Uploader
         wp_enqueue_media();
     }
 
@@ -234,10 +228,13 @@ class FrontendFileExplorer {
         return ob_get_clean();
     }
 
+    /**
+     * Enqueue frontend scripts
+     */
     private function enqueue_frontend_scripts($folder = '/') {
         wp_enqueue_style(
-            'material-icons',
-            'https://fonts.googleapis.com/icon?family=Material+Icons',
+            'frontend-file-explorer-material-icons',
+            FRONTEND_FILE_EXPLORER_PLUGIN_URL . 'assets/css/material-icons.css',
             array(),
             FRONTEND_FILE_EXPLORER_VERSION
         );
@@ -252,7 +249,7 @@ class FrontendFileExplorer {
         wp_enqueue_script(
             'frontend-file-explorer-frontend-script',
             FRONTEND_FILE_EXPLORER_PLUGIN_URL . 'assets/js/frontend-file-explorer.js',
-            array('jquery'),
+            array('jquery', 'wp-util'),
             FRONTEND_FILE_EXPLORER_VERSION,
             true
         );
