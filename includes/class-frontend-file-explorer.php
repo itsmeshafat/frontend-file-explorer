@@ -164,7 +164,7 @@ class FFE_File_Explorer {
      * Enqueue admin scripts and styles
      */
     public function admin_enqueue_scripts($hook) {
-        if ($hook !== 'toplevel_page_ffe') {
+        if ($hook !== 'toplevel_page_ffe-file-explorer') {
             return;
         }
 
@@ -194,7 +194,7 @@ class FFE_File_Explorer {
         );
 
         // Localize script
-        wp_localize_script('ffe-file-explorer-admin-script', 'ffeAdmin', array(
+        wp_localize_script('ffe-file-explorer-admin-script', 'frontendFileExplorerAdmin', array(
             'ajaxUrl' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('ffe_nonce'),
             'uploadsUrl' => FFE_UPLOADS_URL,
@@ -253,7 +253,7 @@ class FFE_File_Explorer {
 
         // Enqueue plugin scripts
         wp_enqueue_script(
-            'ffe-file-explorer-frontend-script',
+            'ffe-file-explorer-frontend-script',`
             FFE_PLUGIN_URL . 'assets/js/ffe-file-explorer.js',
             array('jquery'),
             FFE_VERSION,
@@ -261,7 +261,7 @@ class FFE_File_Explorer {
         );
 
         // Localize script
-        wp_localize_script('ffe-file-explorer-frontend-script', 'ffeFrontend', array(
+        wp_localize_script('ffe-file-explorer-frontend-script', 'frontendFileExplorerFrontend', array(
             'ajaxUrl' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('ffe_nonce'),
             'uploadsUrl' => FFE_UPLOADS_URL,
