@@ -2,7 +2,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/WordPress-Plugin-blue?logo=wordpress" alt="WordPress badge" />
-  <img src="https://img.shields.io/badge/Tested%20up%20to-6.8-green" alt="WP compatibility badge" />
+  <img src="https://img.shields.io/badge/Tested%20up%20to-6.9-green" alt="WP compatibility badge" />
   <img src="https://img.shields.io/badge/PHP-7.4%2B-8892BF?logo=php" alt="PHP version badge" />
   <img src="https://img.shields.io/badge/License-GPL%20v2%2B-orange" alt="License badge" />
 </p>
