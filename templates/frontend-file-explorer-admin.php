@@ -11,7 +11,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 ?>
-<div class="wrap file-explorer-container">
+<div class="wrap frontend-file-explorer-container">
     <h1><?php esc_html_e('File Upload Manager', 'frontend-file-explorer'); ?></h1>
     
     <div class="frontend-file-explorer-toolbar">

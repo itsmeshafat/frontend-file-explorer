@@ -130,11 +130,11 @@
             this.showLoading(true);
 
             $.ajax({
-                url: frontendFileExplorerFrontend.ajaxUrl,
+                url: ffeFrontend.ajaxUrl,
                 type: 'POST',
                 data: {
-                    action: 'frontend_file_explorer_frontend_get_folder_contents',
-                    nonce: frontendFileExplorerFrontend.nonce,
+                    action: 'ffe_frontend_get_folder_contents',
+                    nonce: ffeFrontend.nonce,
                     path: this.currentPath,
                     page: this.currentPage
                 },
@@ -152,7 +152,7 @@
                 },
                 error: (xhr, status, error) => {
                     console.error('AJAX error:', status, error);
-                    this.showError(frontendFileExplorerFrontend.strings.error);
+                    this.showError(ffeFrontend.strings.error);
                 },
                 complete: () => {
                     this.isLoading = false;
@@ -234,7 +234,7 @@
             this.$currentPath.text(path);
 
             // Show the download ZIP button only when we're not at the root
-            $('#file-explorer-frontend-download-zip').toggle(path !== '/');
+            $('#frontend-file-explorer-frontend-download-zip').toggle(path !== '/');
         }
 
         /**
@@ -264,9 +264,9 @@
          */
         showNotification(message, type = 'info') {
             // Remove any existing notifications
-            $('.file-explorer-notification').remove();
+            $('.frontend-file-explorer-notification').remove();
 
-            const $notification = $('<div class="file-explorer-notification ' + type + '">' + message + '</div>');
+            const $notification = $('<div class="frontend-file-explorer-notification ' + type + '">' + message + '</div>');
             $('body').append($notification);
 
             setTimeout(() => {
@@ -280,7 +280,7 @@
          * Handle folder click
          */
         handleFolderClick(e) {
-            if ($(e.target).closest('.file-explorer-item-actions').length) {
+            if ($(e.target).closest('.frontend-file-explorer-item-actions').length) {
                 return;
             }
 
@@ -299,7 +299,7 @@
             e.preventDefault();
             e.stopPropagation();
 
-            const $item = $(e.target).closest('.file-explorer-item');
+            const $item = $(e.target).closest('.frontend-file-explorer-item');
             const path = $item.data('path');
             const type = $item.data('type');
 
@@ -317,14 +317,14 @@
             e.preventDefault();
             e.stopPropagation();
 
-            const $item = $(e.target).closest('.file-explorer-item');
+            const $item = $(e.target).closest('.frontend-file-explorer-item');
             const path = $item.data('path');
 
             // Open download in new tab
             window.open(
-                frontendFileExplorerFrontend.ajaxUrl +
-                '?action=frontend_file_explorer_frontend_download_as_zip' +
-                '&nonce=' + frontendFileExplorerFrontend.nonce +
+                ffeFrontend.ajaxUrl +
+                '?action=ffe_frontend_download_as_zip' +
+                '&nonce=' + ffeFrontend.nonce +
                 '&path=' + encodeURIComponent(path),
                 '_blank'
             );
@@ -338,9 +338,9 @@
 
             // Open download in new tab
             window.open(
-                frontendFileExplorerFrontend.ajaxUrl +
-                '?action=frontend_file_explorer_frontend_download_as_zip' +
-                '&nonce=' + frontendFileExplorerFrontend.nonce +
+                ffeFrontend.ajaxUrl +
+                '?action=ffe_frontend_download_as_zip' +
+                '&nonce=' + ffeFrontend.nonce +
                 '&path=' + encodeURIComponent(this.currentPath),
                 '_blank'
             );
@@ -353,12 +353,12 @@
             e.preventDefault();
             e.stopPropagation();
 
-            const $item = $(e.target).closest('.file-explorer-item');
+            const $item = $(e.target).closest('.frontend-file-explorer-item');
             const path = $item.data('path');
 
             // Create a temporary link and click it
             const link = document.createElement('a');
-            link.href = frontendFileExplorerFrontend.uploadsUrl + path;
+            link.href = ffeFrontend.uploadsUrl + path;
             link.download = path.split('/').pop();
             link.target = '_blank';
             document.body.appendChild(link);
@@ -373,15 +373,15 @@
             e.preventDefault();
             e.stopPropagation();
 
-            const $item = $(e.target).closest('.file-explorer-item');
+            const $item = $(e.target).closest('.frontend-file-explorer-item');
             const path = $item.data('path');
 
             $.ajax({
-                url: frontendFileExplorerFrontend.ajaxUrl,
+                url: ffeFrontend.ajaxUrl,
                 type: 'POST',
                 data: {
-                    action: 'frontend_file_explorer_frontend_get_file_link',
-                    nonce: frontendFileExplorerFrontend.nonce,
+                    action: 'ffe_frontend_get_file_link',
+                    nonce: ffeFrontend.nonce,
                     path: path
                 },
                 success: (response) => {
@@ -394,13 +394,13 @@
                         document.execCommand('copy');
                         document.body.removeChild(tempInput);
 
-                        this.showSuccess(frontendFileExplorerFrontend.strings.copySuccess);
+                        this.showSuccess(ffeFrontend.strings.copySuccess);
                     } else {
                         this.showError(response.data);
                     }
                 },
                 error: () => {
-                    this.showError(frontendFileExplorerFrontend.strings.error);
+                    this.showError(ffeFrontend.strings.error);
                 }
             });
         }

@@ -298,14 +298,14 @@
     overflow-y: auto;
 }
 
-.file-explorer-upload-file {
+.frontend-file-explorer-upload-file {
     align-items: center;
     border-bottom: 1px solid #f0f0f0;
     display: flex;
     padding: 10px 0;
 }
 
-.file-explorer-upload-file-name {
+.frontend-file-explorer-upload-file-name {
     flex: 1;
     margin-right: 10px;
     overflow: hidden;
@@ -313,15 +313,15 @@
     white-space: nowrap;
 }
 
-.file-explorer-upload-file-status {
+.frontend-file-explorer-upload-file-status {
     font-size: 12px;
 }
 
-.file-explorer-upload-file-status.success {
+.frontend-file-explorer-upload-file-status.success {
     color: #46b450;
 }
 
-.file-explorer-upload-file-status.error {
+.frontend-file-explorer-upload-file-status.error {
     color: #dc3232;
 }
 

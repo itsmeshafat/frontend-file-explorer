@@ -17,35 +17,35 @@ if (!defined('ABSPATH')) {
 }
 
 // Define plugin constants
-define('FRONTEND_FILE_EXPLORER_VERSION', '1.0.1');
-define('FRONTEND_FILE_EXPLORER_PLUGIN_DIR', plugin_dir_path(__FILE__));
-define('FRONTEND_FILE_EXPLORER_PLUGIN_URL', plugin_dir_url(__FILE__));
-define('FRONTEND_FILE_EXPLORER_PLUGIN_BASENAME', plugin_basename(__FILE__));
-define('FRONTEND_FILE_EXPLORER_UPLOADS_DIR', wp_upload_dir()['basedir'] . '/downloads');
-define('FRONTEND_FILE_EXPLORER_UPLOADS_URL', wp_upload_dir()['baseurl'] . '/downloads');
+define('FFE_VERSION', '1.0.1');
+define('FFE_PLUGIN_DIR', plugin_dir_path(__FILE__));
+define('FFE_PLUGIN_URL', plugin_dir_url(__FILE__));
+define('FFE_PLUGIN_BASENAME', plugin_basename(__FILE__));
+define('FFE_UPLOADS_DIR', wp_upload_dir()['basedir'] . '/downloads');
+define('FFE_UPLOADS_URL', wp_upload_dir()['baseurl'] . '/downloads');
 
 // Include required files
-require_once FRONTEND_FILE_EXPLORER_PLUGIN_DIR . 'includes/class-frontend-file-explorer.php';
-require_once FRONTEND_FILE_EXPLORER_PLUGIN_DIR . 'includes/class-frontend-file-explorer-ajax.php';
+require_once FFE_PLUGIN_DIR . 'includes/class-frontend-file-explorer.php';
+require_once FFE_PLUGIN_DIR . 'includes/class-frontend-file-explorer-ajax.php';
 
 /**
- * The main function responsible for returning the one true Frontend_File_Explorer instance.
+ * The main function responsible for returning the one true FFE_File_Explorer instance.
  *
  * Built by Shafat Mahmud Khan, WordPress Developer — https://itsmeshafat.com
  *
  * @since 1.0.0
- * @return Frontend_File_Explorer
+ * @return FFE_File_Explorer
  */
-function frontend_file_explorer() {
-    return Frontend_File_Explorer::instance();
+function ffe() {
+    return FFE_File_Explorer::instance();
 }
 
 /**
  * Plugin activation function
  */
-function frontend_file_explorer_activate() {
-    $frontend_file_explorer = frontend_file_explorer();
-    $frontend_file_explorer->activate();
+function ffe_activate() {
+    $ffe = ffe();
+    $ffe->activate();
     
     // Flush rewrite rules
     flush_rewrite_rules();
@@ -54,19 +54,19 @@ function frontend_file_explorer_activate() {
 /**
  * Plugin deactivation function
  */
-function frontend_file_explorer_deactivate() {
+function ffe_deactivate() {
     // Flush rewrite rules
     flush_rewrite_rules();
 }
 
 // Register activation and deactivation hooks
-register_activation_hook(__FILE__, 'frontend_file_explorer_activate');
-register_deactivation_hook(__FILE__, 'frontend_file_explorer_deactivate');
+register_activation_hook(__FILE__, 'ffe_activate');
+register_deactivation_hook(__FILE__, 'ffe_deactivate');
 
 // Initialize the plugin
-add_action('plugins_loaded', 'frontend_file_explorer');
+add_action('plugins_loaded', 'ffe');
 
 // Initialize AJAX handlers
 add_action('plugins_loaded', function() {
-    new Frontend_File_Explorer_Ajax();
+    new FFE_Ajax();
 });

@@ -207,11 +207,11 @@
             this.showLoading(true);
 
             $.ajax({
-                url: frontendFileExplorerAdmin.ajaxUrl,
+                url: ffeAdmin.ajaxUrl,
                 type: 'POST',
                 data: {
-                    action: 'frontend_file_explorer_get_folder_contents',
-                    nonce: frontendFileExplorerAdmin.nonce,
+                    action: 'ffe_get_folder_contents',
+                    nonce: ffeAdmin.nonce,
                     path: this.currentPath,
                     page: this.currentPage
                 },
@@ -226,7 +226,7 @@
                     }
                 },
                 error: () => {
-                    this.showError(frontendFileExplorerAdmin.strings.error);
+                    this.showError(ffeAdmin.strings.error);
                 },
                 complete: () => {
                     this.isLoading = false;
@@ -388,9 +388,9 @@
 
             // Open download in new tab
             window.open(
-                frontendFileExplorerAdmin.ajaxUrl +
-                '?action=frontend_file_explorer_download_as_zip' +
-                '&nonce=' + frontendFileExplorerAdmin.nonce +
+                ffeAdmin.ajaxUrl +
+                '?action=ffe_download_as_zip' +
+                '&nonce=' + ffeAdmin.nonce +
                 '&path=' + encodeURIComponent(path),
                 '_blank'
             );
@@ -408,7 +408,7 @@
 
             // Create a temporary link and click it
             const link = document.createElement('a');
-            link.href = frontendFileExplorerAdmin.uploadsUrl + path;
+            link.href = ffeAdmin.uploadsUrl + path;
             link.download = path.split('/').pop();
             link.target = '_blank';
             document.body.appendChild(link);
@@ -427,11 +427,11 @@
             const path = $item.data('path');
 
             $.ajax({
-                url: frontendFileExplorerAdmin.ajaxUrl,
+                url: ffeAdmin.ajaxUrl,
                 type: 'POST',
                 data: {
-                    action: 'frontend_file_explorer_get_file_link',
-                    nonce: frontendFileExplorerAdmin.nonce,
+                    action: 'ffe_get_file_link',
+                    nonce: ffeAdmin.nonce,
                     path: path
                 },
                 success: (response) => {
@@ -444,13 +444,13 @@
                         document.execCommand('copy');
                         document.body.removeChild(tempInput);
 
-                        this.showSuccess(frontendFileExplorerAdmin.strings.copySuccess);
+                        this.showSuccess(ffeAdmin.strings.copySuccess);
                     } else {
                         this.showError(response.data);
                     }
                 },
                 error: () => {
-                    this.showError(frontendFileExplorerAdmin.strings.error);
+                    this.showError(ffeAdmin.strings.error);
                 }
             });
         }
@@ -467,18 +467,18 @@
             const type = $item.data('type');
             const name = $item.find('.frontend-file-explorer-item-name').text();
 
-            if (!confirm(frontendFileExplorerAdmin.strings.confirmDelete)) {
+            if (!confirm(ffeAdmin.strings.confirmDelete)) {
                 return;
             }
 
             this.showLoading(true);
 
             $.ajax({
-                url: frontendFileExplorerAdmin.ajaxUrl,
+                url: ffeAdmin.ajaxUrl,
                 type: 'POST',
                 data: {
-                    action: 'frontend_file_explorer_delete_item',
-                    nonce: frontendFileExplorerAdmin.nonce,
+                    action: 'ffe_delete_item',
+                    nonce: ffeAdmin.nonce,
                     path: path,
                     type: type
                 },
@@ -492,7 +492,7 @@
                     }
                 },
                 error: () => {
-                    this.showError(frontendFileExplorerAdmin.strings.error);
+                    this.showError(ffeAdmin.strings.error);
                 },
                 complete: () => {
                     this.showLoading(false);
@@ -515,7 +515,7 @@
             const folderName = $('#frontend-file-explorer-folder-name').val().trim();
 
             if (!folderName) {
-                this.showError(frontendFileExplorerAdmin.strings.createFolder || 'Please enter a folder name');
+                this.showError(ffeAdmin.strings.createFolder || 'Please enter a folder name');
                 return;
             }
 
@@ -523,11 +523,11 @@
             this.showLoading(true);
 
             $.ajax({
-                url: frontendFileExplorerAdmin.ajaxUrl,
+                url: ffeAdmin.ajaxUrl,
                 type: 'POST',
                 data: {
-                    action: 'frontend_file_explorer_create_folder',
-                    nonce: frontendFileExplorerAdmin.nonce,
+                    action: 'ffe_create_folder',
+                    nonce: ffeAdmin.nonce,
                     folder_name: folderName,
                     parent_path: this.currentPath
                 },
@@ -541,7 +541,7 @@
                     }
                 },
                 error: () => {
-                    this.showError(frontendFileExplorerAdmin.strings.error);
+                    this.showError(ffeAdmin.strings.error);
                 },
                 complete: () => {
                     this.showLoading(false);
@@ -555,9 +555,9 @@
         showUploadModal() {
             // Create a new media frame
             const mediaFrame = wp.media({
-                title: frontendFileExplorerAdmin.strings.uploadFiles || 'Upload Files',
+                title: ffeAdmin.strings.uploadFiles || 'Upload Files',
                 button: {
-                    text: frontendFileExplorerAdmin.strings.upload || 'Upload'
+                    text: ffeAdmin.strings.upload || 'Upload'
                 },
                 multiple: true
             });
@@ -591,11 +591,11 @@
             this.showLoading(true);
 
             $.ajax({
-                url: frontendFileExplorerAdmin.ajaxUrl,
+                url: ffeAdmin.ajaxUrl,
                 type: 'POST',
                 data: {
-                    action: 'frontend_file_explorer_add_media_files',
-                    nonce: frontendFileExplorerAdmin.nonce,
+                    action: 'ffe_add_media_files',
+                    nonce: ffeAdmin.nonce,
                     media_ids: mediaIds,
                     folder_path: this.currentPath
                 },
@@ -604,13 +604,13 @@
                         // Reload items
                         this.currentPage = 1;
                         this.loadItems();
-                        this.showSuccess(response.data || frontendFileExplorerAdmin.strings.uploadSuccess || 'Files uploaded successfully');
+                        this.showSuccess(response.data || ffeAdmin.strings.uploadSuccess || 'Files uploaded successfully');
                     } else {
                         this.showError(response.data);
                     }
                 },
                 error: () => {
-                    this.showError(frontendFileExplorerAdmin.strings.error || 'An error occurred');
+                    this.showError(ffeAdmin.strings.error || 'An error occurred');
                 },
                 complete: () => {
                     this.showLoading(false);
@@ -623,13 +623,13 @@
          */
         uploadSelectedFiles() {
             if (!this.uploadFiles.length) {
-                this.showError(frontendFileExplorerAdmin.strings.selectFiles || 'Please select files to upload');
+                this.showError(ffeAdmin.strings.selectFiles || 'Please select files to upload');
                 return;
             }
 
             const formData = new FormData();
-            formData.append('action', 'frontend_file_explorer_upload_files');
-            formData.append('nonce', frontendFileExplorerAdmin.nonce);
+            formData.append('action', 'ffe_upload_files');
+            formData.append('nonce', ffeAdmin.nonce);
             formData.append('folder_path', this.currentPath);
 
             this.uploadFiles.forEach((file) => {
@@ -645,7 +645,7 @@
             $progressText.text('0%');
 
             $.ajax({
-                url: frontendFileExplorerAdmin.ajaxUrl,
+                url: ffeAdmin.ajaxUrl,
                 type: 'POST',
                 data: formData,
                 processData: false,
@@ -672,7 +672,7 @@
                                 if ($this.find('.frontend-file-explorer-upload-file-name').text() === file.name) {
                                     $this.find('.frontend-file-explorer-upload-file-status')
                                         .addClass('success')
-                                        .text(frontendFileExplorerAdmin.strings.uploaded);
+                                        .text(ffeAdmin.strings.uploaded);
                                 }
                             });
                         });
@@ -706,7 +706,7 @@
                     }
                 },
                 error: () => {
-                    this.showError(frontendFileExplorerAdmin.strings.error);
+                    this.showError(ffeAdmin.strings.error);
                 }
             });
         }
@@ -716,9 +716,9 @@
          */
         openMediaLibrary() {
             const frame = wp.media({
-                title: frontendFileExplorerAdmin.strings.selectFiles,
+                title: ffeAdmin.strings.selectFiles,
                 button: {
-                    text: frontendFileExplorerAdmin.strings.addToFileExplorer
+                    text: ffeAdmin.strings.addToFileExplorer
                 },
                 multiple: true
             });
@@ -728,7 +728,7 @@
                 const mediaIds = selection.pluck('id');
 
                 if (!mediaIds.length) {
-                    this.showError(frontendFileExplorerAdmin.strings.selectFiles || 'Please select files from the media library');
+                    this.showError(ffeAdmin.strings.selectFiles || 'Please select files from the media library');
                     return;
                 }
 
