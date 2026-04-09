@@ -5,8 +5,8 @@
     'use strict';
 
     // Frontend File Explorer class
-    class FrontendFileExplorer {
-        constructor() {
+    class FrontendFileExplorerAdmin {
+constructor() {
             // Properties
             this.currentPath = '/';
             this.currentPage = 1;
@@ -50,7 +50,6 @@
         createTemplateFunction(templateId) {
             const templateElement = document.getElementById(templateId);
             if (!templateElement) {
-                console.error('Template not found:', templateId);
                 return data => '';
             }
 
@@ -206,12 +205,12 @@
             this.isLoading = true;
             this.showLoading(true);
 
-            $.ajax({
-                url: ffeAdmin.ajaxUrl,
+$.ajax({
+                url: frontendFileExplorerAdminConfig.ajaxUrl,
                 type: 'POST',
                 data: {
-                    action: 'ffe_get_folder_contents',
-                    nonce: ffeAdmin.nonce,
+                    action: 'frontend_file_explorer_get_folder_contents',
+                    nonce: frontendFileExplorerAdminConfig.nonce,
                     path: this.currentPath,
                     page: this.currentPage
                 },
@@ -226,7 +225,7 @@
                     }
                 },
                 error: () => {
-                    this.showError(ffeAdmin.strings.error);
+                    this.showError(frontendFileExplorerAdminConfig.strings.error);
                 },
                 complete: () => {
                     this.isLoading = false;
@@ -260,16 +259,10 @@
                 if (item.type === 'folder') {
                     if (this.folderTemplate) {
                         html = this.folderTemplate(item);
-                    } else {
-                        console.error('Folder template not initialized');
-                        return;
                     }
                 } else {
                     if (this.fileTemplate) {
                         html = this.fileTemplate(item);
-                    } else {
-                        console.error('File template not initialized');
-                        return;
                     }
                 }
 
@@ -329,7 +322,6 @@
          * Show error
          */
         showError(message) {
-            console.error('File Explorer Error:', message);
             alert(message);
         }
 
@@ -388,9 +380,9 @@
 
             // Open download in new tab
             window.open(
-                ffeAdmin.ajaxUrl +
-                '?action=ffe_download_as_zip' +
-                '&nonce=' + ffeAdmin.nonce +
+                frontendFileExplorerAdminConfig.ajaxUrl +
+                '?action=frontend_file_explorer_download_as_zip' +
+                '&nonce=' + frontendFileExplorerAdminConfig.nonce +
                 '&path=' + encodeURIComponent(path),
                 '_blank'
             );
@@ -408,7 +400,7 @@
 
             // Create a temporary link and click it
             const link = document.createElement('a');
-            link.href = ffeAdmin.uploadsUrl + path;
+            link.href = frontendFileExplorerAdminConfig.uploadsUrl + path;
             link.download = path.split('/').pop();
             link.target = '_blank';
             document.body.appendChild(link);
@@ -427,11 +419,11 @@
             const path = $item.data('path');
 
             $.ajax({
-                url: ffeAdmin.ajaxUrl,
+                url: frontendFileExplorerAdminConfig.ajaxUrl,
                 type: 'POST',
                 data: {
-                    action: 'ffe_get_file_link',
-                    nonce: ffeAdmin.nonce,
+                    action: 'frontend_file_explorer_get_file_link',
+                    nonce: frontendFileExplorerAdminConfig.nonce,
                     path: path
                 },
                 success: (response) => {
@@ -444,13 +436,13 @@
                         document.execCommand('copy');
                         document.body.removeChild(tempInput);
 
-                        this.showSuccess(ffeAdmin.strings.copySuccess);
+                        this.showSuccess(frontendFileExplorerAdminConfig.strings.copySuccess);
                     } else {
                         this.showError(response.data);
                     }
                 },
                 error: () => {
-                    this.showError(ffeAdmin.strings.error);
+                    this.showError(frontendFileExplorerAdminConfig.strings.error);
                 }
             });
         }
@@ -467,18 +459,18 @@
             const type = $item.data('type');
             const name = $item.find('.frontend-file-explorer-item-name').text();
 
-            if (!confirm(ffeAdmin.strings.confirmDelete)) {
+            if (!confirm(frontendFileExplorerAdminConfig.strings.confirmDelete)) {
                 return;
             }
 
             this.showLoading(true);
 
             $.ajax({
-                url: ffeAdmin.ajaxUrl,
+                url: frontendFileExplorerAdminConfig.ajaxUrl,
                 type: 'POST',
                 data: {
-                    action: 'ffe_delete_item',
-                    nonce: ffeAdmin.nonce,
+                    action: 'frontend_file_explorer_delete_item',
+                    nonce: frontendFileExplorerAdminConfig.nonce,
                     path: path,
                     type: type
                 },
@@ -492,7 +484,7 @@
                     }
                 },
                 error: () => {
-                    this.showError(ffeAdmin.strings.error);
+                    this.showError(frontendFileExplorerAdminConfig.strings.error);
                 },
                 complete: () => {
                     this.showLoading(false);
@@ -515,7 +507,7 @@
             const folderName = $('#frontend-file-explorer-folder-name').val().trim();
 
             if (!folderName) {
-                this.showError(ffeAdmin.strings.createFolder || 'Please enter a folder name');
+                this.showError(frontendFileExplorerAdminConfig.strings.createFolder || 'Please enter a folder name');
                 return;
             }
 
@@ -523,11 +515,11 @@
             this.showLoading(true);
 
             $.ajax({
-                url: ffeAdmin.ajaxUrl,
+                url: frontendFileExplorerAdminConfig.ajaxUrl,
                 type: 'POST',
                 data: {
-                    action: 'ffe_create_folder',
-                    nonce: ffeAdmin.nonce,
+                    action: 'frontend_file_explorer_create_folder',
+                    nonce: frontendFileExplorerAdminConfig.nonce,
                     folder_name: folderName,
                     parent_path: this.currentPath
                 },
@@ -541,7 +533,7 @@
                     }
                 },
                 error: () => {
-                    this.showError(ffeAdmin.strings.error);
+                    this.showError(frontendFileExplorerAdminConfig.strings.error);
                 },
                 complete: () => {
                     this.showLoading(false);
@@ -555,9 +547,9 @@
         showUploadModal() {
             // Create a new media frame
             const mediaFrame = wp.media({
-                title: ffeAdmin.strings.uploadFiles || 'Upload Files',
+                title: frontendFileExplorerAdminConfig.strings.uploadFiles || 'Upload Files',
                 button: {
-                    text: ffeAdmin.strings.upload || 'Upload'
+                    text: frontendFileExplorerAdminConfig.strings.upload || 'Upload'
                 },
                 multiple: true
             });
@@ -591,11 +583,11 @@
             this.showLoading(true);
 
             $.ajax({
-                url: ffeAdmin.ajaxUrl,
+                url: frontendFileExplorerAdminConfig.ajaxUrl,
                 type: 'POST',
                 data: {
-                    action: 'ffe_add_media_files',
-                    nonce: ffeAdmin.nonce,
+                    action: 'frontend_file_explorer_add_media_files',
+                    nonce: frontendFileExplorerAdminConfig.nonce,
                     media_ids: mediaIds,
                     folder_path: this.currentPath
                 },
@@ -604,13 +596,13 @@
                         // Reload items
                         this.currentPage = 1;
                         this.loadItems();
-                        this.showSuccess(response.data || ffeAdmin.strings.uploadSuccess || 'Files uploaded successfully');
+                        this.showSuccess(response.data || frontendFileExplorerAdminConfig.strings.uploadSuccess || 'Files uploaded successfully');
                     } else {
                         this.showError(response.data);
                     }
                 },
                 error: () => {
-                    this.showError(ffeAdmin.strings.error || 'An error occurred');
+                    this.showError(frontendFileExplorerAdminConfig.strings.error || 'An error occurred');
                 },
                 complete: () => {
                     this.showLoading(false);
@@ -623,13 +615,13 @@
          */
         uploadSelectedFiles() {
             if (!this.uploadFiles.length) {
-                this.showError(ffeAdmin.strings.selectFiles || 'Please select files to upload');
+                this.showError(frontendFileExplorerAdminConfig.strings.selectFiles || 'Please select files to upload');
                 return;
             }
 
             const formData = new FormData();
-            formData.append('action', 'ffe_upload_files');
-            formData.append('nonce', ffeAdmin.nonce);
+            formData.append('action', 'frontend_file_explorer_upload_files');
+            formData.append('nonce', frontendFileExplorerAdminConfig.nonce);
             formData.append('folder_path', this.currentPath);
 
             this.uploadFiles.forEach((file) => {
@@ -645,7 +637,7 @@
             $progressText.text('0%');
 
             $.ajax({
-                url: ffeAdmin.ajaxUrl,
+                url: frontendFileExplorerAdminConfig.ajaxUrl,
                 type: 'POST',
                 data: formData,
                 processData: false,
@@ -672,7 +664,7 @@
                                 if ($this.find('.frontend-file-explorer-upload-file-name').text() === file.name) {
                                     $this.find('.frontend-file-explorer-upload-file-status')
                                         .addClass('success')
-                                        .text(ffeAdmin.strings.uploaded);
+                                        .text(frontendFileExplorerAdminConfig.strings.uploaded);
                                 }
                             });
                         });
@@ -706,7 +698,7 @@
                     }
                 },
                 error: () => {
-                    this.showError(ffeAdmin.strings.error);
+                    this.showError(frontendFileExplorerAdminConfig.strings.error);
                 }
             });
         }
@@ -716,9 +708,9 @@
          */
         openMediaLibrary() {
             const frame = wp.media({
-                title: ffeAdmin.strings.selectFiles,
+                title: frontendFileExplorerAdminConfig.strings.selectFiles,
                 button: {
-                    text: ffeAdmin.strings.addToFileExplorer
+                    text: frontendFileExplorerAdminConfig.strings.addToFileExplorer
                 },
                 multiple: true
             });
@@ -728,7 +720,7 @@
                 const mediaIds = selection.pluck('id');
 
                 if (!mediaIds.length) {
-                    this.showError(ffeAdmin.strings.selectFiles || 'Please select files from the media library');
+                    this.showError(frontendFileExplorerAdminConfig.strings.selectFiles || 'Please select files from the media library');
                     return;
                 }
 
@@ -747,8 +739,8 @@
     }
 
     // Initialize when document is ready
-    $(document).ready(function () {
-        new FrontendFileExplorer();
-    });
+        $(document).ready(function () {
+            new FrontendFileExplorerAdmin();
+        });
 
 })(jQuery);

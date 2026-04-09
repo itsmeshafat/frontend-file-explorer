@@ -1,7 +1,7 @@
 === Frontend File Explorer ===
 Contributors:      itsmeshafat
 Tested up to:      6.9
-Stable tag:        1.0.1
+Stable tag:        1.0.2
 License:           GPLv2 or later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 Donate link:       https://itsmeshafat.com
@@ -24,15 +24,27 @@ The plugin provides a seamless experience for both administrators and frontend u
 * **AJAX-Powered:** Fast, smooth navigation and pagination without page reloads.
 * **Translation Ready:** Fully localized with the `frontend-file-explorer` text domain.
 
-The explorer can be used via the Admin interface or the Frontend shortcode:
+**How to use the Explorer:**
 
-* **Admin interface:** Find the menu item **File Upload** in the WordPress admin sidebar. From here you can create folders, upload files (multi-select support), copy existing Media Library items, delete files/folders, and download folders as ZIP archives.
-* **Frontend explorer:** Embed the explorer anywhere (pages, posts, custom post types) using the shortcode `[frontend_file_explorer folder="/"]`.
-    * `folder` (optional) — starting subdirectory relative to `uploads/downloads`. Use `/` for the root.
-    * Visitors can browse folders, download files, and copy direct links.
-    * Mutating actions (upload, delete, etc.) remain restricted to logged-in users with the `upload_files` capability.
+* **Admin Interface:** 
+    Navigate to **File Upload** in your WordPress admin sidebar. From this dedicated dashboard, administrators can create nested folders, upload bulk files (featuring multi-select and drag-and-drop), import existing Media Library assets, delete items, and download entire directories as ZIP archives.
 
-**Who is it for?**
+* **Frontend Shortcode:** 
+    Embed the user-facing explorer interface on any Page, Post, or Custom Post Type using the following shortcode setup:
+    
+    `[frontend_file_explorer]`
+    *(Renders the explorer starting at the root storage directory)*
+    
+    **Advanced Shortcode Usage:**
+    You can explicitly define the starting folder path relative to the root `uploads/downloads` directory by using the `folder` attribute:
+    
+    `[frontend_file_explorer folder="/course-materials"]`
+    `[frontend_file_explorer folder="/clients/acme-corp"]`
+
+    * **Frontend Capabilities:** Visitors browsing the frontend can view contents, click files to download them, and copy direct sharing links.
+    * **Security:** Destructive or mutating actions (like file upload, folder creation, or deletion) remain strictly hidden and blocked from public visitors. They are only accessible to logged-in users who possess the WordPress `upload_files` capability.
+
+**Who is this plugin for?**
 
 * Course creators who need a simple, branded downloads area.
 * Agencies and freelancers who share files with clients.
@@ -77,6 +89,13 @@ The plugin is fully localization-ready and uses the `frontend-file-explorer` tex
 2. Frontend file explorer embedded via shortcode (frontend view).
 
 == Changelog ==
+
+= 1.0.2 =
+
+* **Fix:** Resolved a critical bug causing the frontend explorer to execute filesystem deletion logic instead of listing directory contents.
+* **Fix:** Repaired the "Download as ZIP" mechanism to eliminate `ERR_INVALID_RESPONSE` failures by safely building ZipArchive temp files and explicitly managing PHP output buffers and Safari download headers.
+* **Feature:** Fully integrated the missing backend endpoints required for the UI, enabling seamless frontend and backend folder creation, file uploads, and Media Library imports.
+* **Security & Standards:** Swept codebase for strict WordPress PHPCS warnings. Corrected all variable unslashing, resolved missing nonce verification checks, migrated deprecated filesystem functions to `WP_Filesystem`, and reinforced `esc_html__` translation domain strings and translators comments.
 
 = 1.0.1 =
 

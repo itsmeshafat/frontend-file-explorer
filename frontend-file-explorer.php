@@ -3,7 +3,7 @@
  * Plugin Name: Frontend File Explorer
  * Plugin URI: https://itsmeshafat.com/plugins/frontend-file-explorer
  * Description: A modern file management system with Windows Explorer-like UI for WordPress
- * Version: 1.0.1
+ * Version: 1.0.2
  * Author: Shafat Mahmud Khan
  * Author URI: https://itsmeshafat.com
  * Text Domain: frontend-file-explorer
@@ -17,35 +17,35 @@ if (!defined('ABSPATH')) {
 }
 
 // Define plugin constants
-define('FFE_VERSION', '1.0.1');
-define('FFE_PLUGIN_DIR', plugin_dir_path(__FILE__));
-define('FFE_PLUGIN_URL', plugin_dir_url(__FILE__));
-define('FFE_PLUGIN_BASENAME', plugin_basename(__FILE__));
-define('FFE_UPLOADS_DIR', wp_upload_dir()['basedir'] . '/downloads');
-define('FFE_UPLOADS_URL', wp_upload_dir()['baseurl'] . '/downloads');
+define('FRONTEND_FILE_EXPLORER_VERSION', '1.0.2');
+define('FRONTEND_FILE_EXPLORER_PLUGIN_DIR', plugin_dir_path(__FILE__));
+define('FRONTEND_FILE_EXPLORER_PLUGIN_URL', plugin_dir_url(__FILE__));
+define('FRONTEND_FILE_EXPLORER_PLUGIN_BASENAME', plugin_basename(__FILE__));
+define('FRONTEND_FILE_EXPLORER_UPLOADS_DIR', wp_upload_dir()['basedir'] . '/downloads');
+define('FRONTEND_FILE_EXPLORER_UPLOADS_URL', wp_upload_dir()['baseurl'] . '/downloads');
 
 // Include required files
-require_once FFE_PLUGIN_DIR . 'includes/class-frontend-file-explorer.php';
-require_once FFE_PLUGIN_DIR . 'includes/class-frontend-file-explorer-ajax.php';
+require_once FRONTEND_FILE_EXPLORER_PLUGIN_DIR . 'includes/class-frontend-file-explorer.php';
+require_once FRONTEND_FILE_EXPLORER_PLUGIN_DIR . 'includes/class-frontend-file-explorer-ajax.php';
 
 /**
- * The main function responsible for returning the one true FFE_File_Explorer instance.
+ * The main function responsible for returning the one true FrontendFileExplorer instance.
  *
  * Built by Shafat Mahmud Khan, WordPress Developer — https://itsmeshafat.com
  *
  * @since 1.0.0
- * @return FFE_File_Explorer
+ * @return FrontendFileExplorer
  */
-function ffe() {
-    return FFE_File_Explorer::instance();
+function FrontendFileExplorer() {
+    return FrontendFileExplorer::instance();
 }
 
 /**
  * Plugin activation function
  */
-function ffe_activate() {
-    $ffe = ffe();
-    $ffe->activate();
+function FrontendFileExplorer_activate() {
+    $instance = FrontendFileExplorer();
+    $instance->activate();
     
     // Flush rewrite rules
     flush_rewrite_rules();
@@ -54,19 +54,19 @@ function ffe_activate() {
 /**
  * Plugin deactivation function
  */
-function ffe_deactivate() {
+function FrontendFileExplorer_deactivate() {
     // Flush rewrite rules
     flush_rewrite_rules();
 }
 
 // Register activation and deactivation hooks
-register_activation_hook(__FILE__, 'ffe_activate');
-register_deactivation_hook(__FILE__, 'ffe_deactivate');
+register_activation_hook(__FILE__, 'FrontendFileExplorer_activate');
+register_deactivation_hook(__FILE__, 'FrontendFileExplorer_deactivate');
 
 // Initialize the plugin
-add_action('plugins_loaded', 'ffe');
+add_action('plugins_loaded', 'FrontendFileExplorer', 5);
 
 // Initialize AJAX handlers
 add_action('plugins_loaded', function() {
-    new FFE_Ajax();
-});
+    new FrontendFileExplorerAjax();
+}, 10);

@@ -2,7 +2,7 @@
 /**
  * File Explorer AJAX Handler
  *
- * @package FFE
+ * @package FrontendFileExplorer
  * @since 1.0.0
  */
 
@@ -12,9 +12,9 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * File Explorer AJAX Handler Class — built by Shafat Mahmud Khan (WordPress Developer, https://itsmeshafat.com)
+ * File Explorer AJAX Handler Class
  */
-class FFE_Ajax {
+class FrontendFileExplorerAjax {
     /**
      * Constructor
      */
@@ -27,548 +27,287 @@ class FFE_Ajax {
      */
     private function init_hooks() {
         // Admin AJAX handlers
-        add_action('wp_ajax_ffe_get_folder_contents', array($this, 'get_folder_contents'));
-        add_action('wp_ajax_ffe_create_folder', array($this, 'create_folder'));
-        add_action('wp_ajax_ffe_upload_files', array($this, 'upload_files'));
-        add_action('wp_ajax_ffe_add_media_files', array($this, 'add_media_files'));
-        add_action('wp_ajax_ffe_delete_item', array($this, 'delete_item'));
-        add_action('wp_ajax_ffe_download_as_zip', array($this, 'download_as_zip'));
-        add_action('wp_ajax_ffe_get_file_link', array($this, 'get_file_link'));
+        add_action('wp_ajax_frontend_file_explorer_get_folder_contents', array($this, 'get_folder_contents'));
+        add_action('wp_ajax_frontend_file_explorer_create_folder', array($this, 'create_folder'));
+        add_action('wp_ajax_frontend_file_explorer_upload_files', array($this, 'upload_files'));
+        add_action('wp_ajax_frontend_file_explorer_add_media_files', array($this, 'add_media_files'));
+        add_action('wp_ajax_frontend_file_explorer_delete_item', array($this, 'delete_item'));
+        add_action('wp_ajax_frontend_file_explorer_download_as_zip', array($this, 'download_as_zip'));
+        add_action('wp_ajax_frontend_file_explorer_get_file_link', array($this, 'get_file_link'));
         
         // Frontend AJAX handlers
-        add_action('wp_ajax_ffe_frontend_get_folder_contents', array($this, 'frontend_get_folder_contents'));
-        add_action('wp_ajax_nopriv_ffe_frontend_get_folder_contents', array($this, 'frontend_get_folder_contents'));
-        add_action('wp_ajax_ffe_frontend_download_as_zip', array($this, 'download_as_zip'));
-        add_action('wp_ajax_nopriv_ffe_frontend_download_as_zip', array($this, 'download_as_zip'));
-        add_action('wp_ajax_ffe_frontend_get_file_link', array($this, 'get_file_link'));
-        add_action('wp_ajax_nopriv_ffe_frontend_get_file_link', array($this, 'get_file_link'));
+        add_action('wp_ajax_frontend_file_explorer_frontend_get_folder_contents', array($this, 'frontend_get_folder_contents'));
+        add_action('wp_ajax_nopriv_frontend_file_explorer_frontend_get_folder_contents', array($this, 'frontend_get_folder_contents'));
+        add_action('wp_ajax_frontend_file_explorer_frontend_download_as_zip', array($this, 'download_as_zip'));
+        add_action('wp_ajax_nopriv_frontend_file_explorer_frontend_download_as_zip', array($this, 'download_as_zip'));
+        add_action('wp_ajax_frontend_file_explorer_frontend_get_file_link', array($this, 'get_file_link'));
+        add_action('wp_ajax_nopriv_frontend_file_explorer_frontend_get_file_link', array($this, 'get_file_link'));
     }
     
     /**
      * Get folder contents
      */
     public function get_folder_contents() {
-        // Check nonce
-        check_ajax_referer('ffe_nonce', 'nonce');
+        check_ajax_referer('frontend_file_explorer_nonce', 'nonce');
         
-        // Check permissions
         if (!current_user_can('upload_files')) {
-            wp_send_json_error(__('You do not have permission to access this content.', 'ffe'));
+            wp_send_json_error(__('You do not have permission to access this content.', 'frontend-file-explorer'));
         }
         
-        $folder_path = isset($_POST['path']) ? sanitize_text_field(wp_unslash($_POST['path'])) : '/';
-        
-        // Validate folder path
-        if (strpos($folder_path, '..') !== false) {
-            wp_send_json_error(__('Invalid folder path.', 'ffe'));
-        }
-        
-        // Get the uploads directory
-        $uploads_dir = wp_upload_dir();
-        $base_dir = $uploads_dir['basedir'] . '/downloads';
-        
-        // Build the full server path
-        $server_path = $base_dir . $folder_path;
-        
-        // Check if the path exists and is a directory
-        if (!file_exists($server_path) || !is_dir($server_path)) {
-            wp_send_json_error(__('The specified folder does not exist.', 'ffe'));
-        }
-        
-        // Get folder contents
-        $folders = array();
-        $files = array();
-        
-        if ($handle = opendir($server_path)) {
-            while (false !== ($entry = readdir($handle))) {
-                if ($entry != "." && $entry != ".." && $entry != ".htaccess" && $entry != "index.php") {
-                    $full_path = $server_path . '/' . $entry;
-                    $relative_path = $folder_path . '/' . $entry;
-                    $relative_path = str_replace('//', '/', $relative_path);
-                    
-                    if (is_dir($full_path)) {
-                        $folders[] = array(
-                            'name' => $entry,
-                            'path' => $relative_path,
-                            'type' => 'folder'
-                        );
-                    } else {
-                        $file_type = wp_check_filetype($entry);
-                        $files[] = array(
-                            'name' => $entry,
-                            'path' => $relative_path,
-                            'type' => 'file',
-                            'extension' => $file_type['ext'],
-                            'url' => $uploads_dir['baseurl'] . '/downloads' . $relative_path
-                        );
-                    }
-                }
-            }
-            closedir($handle);
-        }
-        
-        // Sort folders and files
-        usort($folders, function($a, $b) {
-            return strcasecmp($a['name'], $b['name']);
-        });
-        
-        usort($files, function($a, $b) {
-            return strcasecmp($a['name'], $b['name']);
-        });
-        
-        // Pagination
-        $page = isset($_POST['page']) ? absint($_POST['page']) : 1;
-        $items_per_page = get_option('ffe_items_per_page', 20);
-        
-        $all_items = array_merge($folders, $files);
-        $total_items = count($all_items);
-        $total_pages = ceil($total_items / $items_per_page);
-        
-        $offset = ($page - 1) * $items_per_page;
-        $items = array_slice($all_items, $offset, $items_per_page);
-        
-        // Prepare response
-        $response = array(
-            'items' => $items,
-            'current_path' => $folder_path,
-            'pagination' => array(
-                'current_page' => $page,
-                'total_pages' => $total_pages,
-                'total_items' => $total_items,
-                'has_more' => ($page < $total_pages)
-            )
-        );
-        
-        wp_send_json_success($response);
+        $this->process_get_folder_contents();
     }
-    
+
     /**
-     * Frontend get folder contents
+     * Frontend Get folder contents
      */
     public function frontend_get_folder_contents() {
-        // Check nonce
-        check_ajax_referer('ffe_nonce', 'nonce');
-        
-        // We allow all users to view the content in frontend
-        
+        check_ajax_referer('frontend_file_explorer_nonce', 'nonce');
+        $this->process_get_folder_contents();
+    }
+
+    private function process_get_folder_contents() {
+        // phpcs:ignore WordPress.Security.NonceVerification.Missing
         $folder_path = isset($_POST['path']) ? sanitize_text_field(wp_unslash($_POST['path'])) : '/';
         
-        // Validate folder path
         if (strpos($folder_path, '..') !== false) {
-            wp_send_json_error(__('Invalid folder path.', 'ffe'));
+            wp_send_json_error(__('Invalid folder path.', 'frontend-file-explorer'));
         }
         
-        // Get the uploads directory
-        $uploads_dir = wp_upload_dir();
-        $base_dir = $uploads_dir['basedir'] . '/downloads';
+        $upload_dir = wp_upload_dir();
+        $base_dir = trailingslashit($upload_dir['basedir']) . 'downloads';
+        $base_url = trailingslashit($upload_dir['baseurl']) . 'downloads';
         
-        // Build the full server path
-        $server_path = $base_dir . $folder_path;
+        $full_path = trailingslashit($base_dir) . ltrim($folder_path, '/');
         
-        // Check if the path exists and is a directory
-        if (!file_exists($server_path) || !is_dir($server_path)) {
-            wp_send_json_error(__('The specified folder does not exist.', 'ffe'));
+        if (!file_exists($full_path) || !is_dir($full_path)) {
+            wp_send_json_error(__('The specified folder does not exist.', 'frontend-file-explorer'));
         }
         
-        // Get folder contents
-        $folders = array();
-        $files = array();
+        $items = array();
+        $files = scandir($full_path);
         
-        if ($handle = opendir($server_path)) {
-            while (false !== ($entry = readdir($handle))) {
-                if ($entry != "." && $entry != ".." && $entry != ".htaccess" && $entry != "index.php") {
-                    $full_path = $server_path . '/' . $entry;
-                    $relative_path = $folder_path . '/' . $entry;
-                    $relative_path = str_replace('//', '/', $relative_path);
-                    
-                    if (is_dir($full_path)) {
-                        $folders[] = array(
-                            'name' => $entry,
-                            'path' => $relative_path,
-                            'type' => 'folder'
-                        );
-                    } else {
-                        $file_type = wp_check_filetype($entry);
-                        $files[] = array(
-                            'name' => $entry,
-                            'path' => $relative_path,
-                            'type' => 'file',
-                            'extension' => $file_type['ext'],
-                            'url' => $uploads_dir['baseurl'] . '/downloads' . $relative_path
-                        );
-                    }
+        if (is_array($files)) {
+            foreach ($files as $file) {
+                if ($file === '.' || $file === '..' || $file === 'index.php' || $file === '.htaccess') {
+                    continue;
                 }
+                
+                $item_path = trailingslashit($full_path) . $file;
+                $is_dir = is_dir($item_path);
+                
+                $items[] = array(
+                    'name' => $file,
+                    'path' => trailingslashit(rtrim($folder_path, '/')) . $file,
+                    'type' => $is_dir ? 'folder' : 'file',
+                    'extension' => $is_dir ? '' : strtolower(pathinfo($file, PATHINFO_EXTENSION)),
+                    'url' => $is_dir ? '' : trailingslashit($base_url) . ltrim(trailingslashit(rtrim($folder_path, '/')) . $file, '/')
+                );
             }
-            closedir($handle);
         }
         
-        // Sort folders and files
-        usort($folders, function($a, $b) {
-            return strcasecmp($a['name'], $b['name']);
-        });
-        
-        usort($files, function($a, $b) {
-            return strcasecmp($a['name'], $b['name']);
-        });
-        
-        // Pagination for frontend
-        $page = isset($_POST['page']) ? absint($_POST['page']) : 1;
-        $items_per_page = get_option('ffe_items_per_page', 20);
-        
-        $all_items = array_merge($folders, $files);
-        $total_items = count($all_items);
-        $total_pages = ceil($total_items / $items_per_page);
-        
-        $offset = ($page - 1) * $items_per_page;
-        $items = array_slice($all_items, $offset, $items_per_page);
-        
-        // Prepare response
-        $response = array(
+        wp_send_json_success(array(
             'items' => $items,
             'current_path' => $folder_path,
-            'pagination' => array(
-                'current_page' => $page,
-                'total_pages' => $total_pages,
-                'total_items' => $total_items,
-                'has_more' => ($page < $total_pages)
-            )
-        );
-        
-        wp_send_json_success($response);
+            'pagination' => array('has_more' => false)
+        ));
     }
     
     /**
      * Create folder
      */
     public function create_folder() {
-        // Check nonce
-        check_ajax_referer('ffe_nonce', 'nonce');
+        check_ajax_referer('frontend_file_explorer_nonce', 'nonce');
+        if (!current_user_can('upload_files')) wp_send_json_error(__('Permission denied.', 'frontend-file-explorer'));
         
-        // Check permissions
-        if (!current_user_can('upload_files')) {
-            wp_send_json_error(__('You do not have permission to create folders.', 'ffe'));
-        }
+        $path = isset($_POST['parent_path']) ? sanitize_text_field(wp_unslash($_POST['parent_path'])) : '/';
+        $name = isset($_POST['folder_name']) ? sanitize_file_name(wp_unslash($_POST['folder_name'])) : '';
+        if (empty($name) || strpos($path, '..') !== false) wp_send_json_error(__('Invalid request.', 'frontend-file-explorer'));
         
-        $folder_name = isset($_POST['folder_name']) ? sanitize_file_name(wp_unslash($_POST['folder_name'])) : '';
-        $parent_path = isset($_POST['parent_path']) ? sanitize_text_field(wp_unslash($_POST['parent_path'])) : '/';
+        $upload_dir = wp_upload_dir();
+        $full_path = trailingslashit($upload_dir['basedir']) . 'downloads' . trailingslashit($path) . $name;
         
-        if (empty($folder_name)) {
-            wp_send_json_error(__('Please enter a folder name.', 'ffe'));
-        }
+        if (file_exists($full_path)) wp_send_json_error(__('Folder already exists.', 'frontend-file-explorer'));
+        if (wp_mkdir_p($full_path)) wp_send_json_success();
         
-        // Validate parent path
-        if (strpos($parent_path, '..') !== false) {
-            wp_send_json_error(__('Invalid parent path.', 'ffe'));
-        }
-        
-        // Get the uploads directory
-        $uploads_dir = wp_upload_dir();
-        $base_dir = $uploads_dir['basedir'] . '/downloads';
-        
-        // Build the full server path
-        $parent_dir = $base_dir . $parent_path;
-        $new_folder = $parent_dir . '/' . $folder_name;
-        
-        // Check if the parent directory exists
-        if (!file_exists($parent_dir) || !is_dir($parent_dir)) {
-            wp_send_json_error(__('The parent directory does not exist.', 'ffe'));
-        }
-        
-        // Check if the folder already exists
-        if (file_exists($new_folder)) {
-            wp_send_json_error(__('A folder with this name already exists.', 'ffe'));
-        }
-        
-        // Create the folder
-        if (wp_mkdir_p($new_folder)) {
-            wp_send_json_success(__('Folder created successfully.', 'ffe'));
-        } else {
-            wp_send_json_error(__('Failed to create folder.', 'ffe'));
-        }
+        wp_send_json_error(__('Failed to create folder.', 'frontend-file-explorer'));
     }
-    
+
     /**
      * Upload files
      */
     public function upload_files() {
-        // Check nonce
-        check_ajax_referer('ffe_nonce', 'nonce');
+        check_ajax_referer('frontend_file_explorer_nonce', 'nonce');
+        if (!current_user_can('upload_files')) wp_send_json_error(__('Permission denied.', 'frontend-file-explorer'));
         
-        // Check permissions
-        if (!current_user_can('upload_files')) {
-            wp_send_json_error(__('You do not have permission to upload files.', 'ffe'));
+        $path = isset($_POST['folder_path']) ? sanitize_text_field(wp_unslash($_POST['folder_path'])) : '/';
+        if (strpos($path, '..') !== false) wp_send_json_error(__('Invalid path.', 'frontend-file-explorer'));
+        if (empty($_FILES['files'])) wp_send_json_error(__('No file uploaded.', 'frontend-file-explorer'));
+        
+        $upload_dir = wp_upload_dir();
+        $dest_dir = trailingslashit($upload_dir['basedir']) . 'downloads' . trailingslashit($path);
+        wp_mkdir_p($dest_dir);
+        
+        require_once ABSPATH . 'wp-admin/includes/file.php';
+        global $wp_filesystem;
+        if (empty($wp_filesystem)) {
+            WP_Filesystem();
         }
         
-        $folder_path = isset($_POST['folder_path']) ? sanitize_text_field(wp_unslash($_POST['folder_path'])) : '/';
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+        $uploaded_files = isset($_FILES['files']) ? $_FILES['files'] : null;
+        $upload_overrides = array('test_form' => false);
         
-        // Validate folder path
-        if (strpos($folder_path, '..') !== false) {
-            wp_send_json_error(__('Invalid folder path.', 'ffe'));
-        }
+        $responses = array('files' => array(), 'errors' => array());
         
-        // Get the uploads directory
-        $uploads_dir = wp_upload_dir();
-        $target_dir = $uploads_dir['basedir'] . '/downloads' . $folder_path;
-        
-        // Check if the target directory exists
-        if (!file_exists($target_dir)) {
-            wp_mkdir_p($target_dir);
-        }
-        
-        // Validate and sanitize $_FILES array
-        if ( ! isset( $_FILES['files'] ) || ! is_array( $_FILES['files'] ) ) {
-            wp_send_json_error( __( 'No files were uploaded.', 'ffe' ) );
-        }
-        
-        // Sanitize the files array
-        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Sanitization is performed on individual file properties (name, etc.) in the loop below.
-        $files = wp_unslash( $_FILES['files'] );
-        
-        // Ensure the required keys exist in the files array
-        if (!isset($files['name'], $files['tmp_name'], $files['error']) || !is_array($files['name'])) {
-            wp_send_json_error(__('Invalid file upload data.', 'ffe'));
-        }
-        
-        $uploaded_files = array();
-        
-        // Loop through each file
-        for ($i = 0; $i < count($files['name']); $i++) {
-            $file_name = isset($files['name'][$i]) ? sanitize_file_name($files['name'][$i]) : '';
-            $file_tmp = isset($files['tmp_name'][$i]) ? $files['tmp_name'][$i] : '';
-            $file_error = isset($files['error'][$i]) ? $files['error'][$i] : UPLOAD_ERR_NO_FILE;
-            
-            // Check for errors
-            if ($file_error !== UPLOAD_ERR_OK) {
-                continue;
-            }
-            
-            // Move the file to the target directory
-            $target_file = $target_dir . '/' . $file_name;
-            
-            // Initialize WordPress filesystem
-            global $wp_filesystem;
-            if (empty($wp_filesystem)) {
-                require_once(ABSPATH . '/wp-admin/includes/file.php');
-                WP_Filesystem();
-            }
-            
-            if ($wp_filesystem->move_uploaded_file($file_tmp, $target_file)) {
-                $uploaded_files[] = $file_name;
-            }
-        }
-        
-        if (count($uploaded_files) > 0) {
-            wp_send_json_success(array(
-                'message' => sprintf(
-                    /* translators: %d: Number of files uploaded */
-                    __('%d files uploaded successfully.', 'ffe'), 
-                    count($uploaded_files)
-                ),
-                'files' => $uploaded_files
-            ));
-        } else {
-            wp_send_json_error(__('Failed to upload files.', 'ffe'));
-        }
-    }
-    
-    /**
-     * Add media files to folder (secure version using attachment IDs)
-     */
-    public function add_media_files() {
-        // Check nonce
-        check_ajax_referer('ffe_nonce', 'nonce');
-        
-        // Check permissions
-        if (!current_user_can('upload_files')) {
-            wp_send_json_error(__('You do not have permission to copy files.', 'ffe'));
-        }
-        
-        // Get parameters
-        $folder_path = isset($_POST['folder_path']) ? sanitize_text_field(wp_unslash($_POST['folder_path'])) : '/';
-        $media_ids = isset($_POST['media_ids']) ? array_map('absint', wp_unslash($_POST['media_ids'])) : array();
-        
-        // Validate media IDs
-        if (!is_array($media_ids) || empty($media_ids)) {
-            wp_send_json_error(__('Invalid media IDs.', 'ffe'));
-        }
-        
-        // Sanitize media IDs to integers
-        $media_ids = array_map('absint', $media_ids);
-        
-        // Validate folder path
-        if (strpos($folder_path, '..') !== false) {
-            wp_send_json_error(__('Invalid folder path.', 'ffe'));
-        }
-        
-        // Get the uploads directory
-        $uploads_dir = wp_upload_dir();
-        $base_dir = $uploads_dir['basedir'] . '/downloads';
-        
-        // Create the target directory if it doesn't exist
-        $target_dir = $base_dir . $folder_path;
-        if (!file_exists($target_dir)) {
-            wp_mkdir_p($target_dir);
-        }
-        
-        // Copy each file using attachment IDs
-        $copied_files = array();
-        foreach ($media_ids as $attachment_id) {
-            // Verify this is a valid attachment
-            if (get_post_type($attachment_id) !== 'attachment') {
-                continue;
-            }
-            
-            // Get the file path securely using WordPress function
-            $file_path = get_attached_file($attachment_id);
-            
-            if ($file_path && file_exists($file_path)) {
-                // Get the filename
-                $file_name = basename($file_path);
-                $file_name = sanitize_file_name($file_name);
+        // restructure $_FILES array for wp_handle_sideload if multiple items
+        if ($uploaded_files && is_array($uploaded_files['name'])) {
+            $count = count($uploaded_files['name']);
+            for ($i = 0; $i < $count; $i++) {
+                $file = array(
+                    'name' => $uploaded_files['name'][$i],
+                    'type' => $uploaded_files['type'][$i],
+                    'tmp_name' => $uploaded_files['tmp_name'][$i],
+                    'error' => $uploaded_files['error'][$i],
+                    'size' => $uploaded_files['size'][$i]
+                );
                 
-                // Generate target path
-                $target_path = $target_dir . '/' . $file_name;
-                
-                // Copy the file
-                if (copy($file_path, $target_path)) {
-                    $copied_files[] = $file_name;
+                $movefile = wp_handle_sideload($file, $upload_overrides);
+                if ($movefile && !isset($movefile['error'])) {
+                    $filename = wp_basename($movefile['file']);
+                    $new_file = trailingslashit($dest_dir) . $filename;
+                    $wp_filesystem->move($movefile['file'], $new_file);
+                    $responses['files'][] = array('name' => $file['name']);
+                } else {
+                    $responses['errors'][] = 'Error uploading ' . $file['name'] . ': ' . $movefile['error'];
                 }
             }
         }
         
-        if (count($copied_files) > 0) {
-            wp_send_json_success(sprintf(
-                /* translators: %d: Number of files copied */
-                __('%d files copied successfully.', 'ffe'),
-                count($copied_files)
-            ));
+        if (empty($responses['errors'])) {
+            wp_send_json_success($responses);
         } else {
-            wp_send_json_error(__('No files were copied.', 'ffe'));
+            wp_send_json_error($responses);
         }
     }
-    
+
+    /**
+     * Add media files
+     */
+    public function add_media_files() {
+        check_ajax_referer('frontend_file_explorer_nonce', 'nonce');
+        if (!current_user_can('upload_files')) wp_send_json_error(__('Permission denied.', 'frontend-file-explorer'));
+        
+        $path = isset($_POST['folder_path']) ? sanitize_text_field(wp_unslash($_POST['folder_path'])) : '/';
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+        $attachment_ids = isset($_POST['media_ids']) ? array_map('intval', wp_unslash((array) $_POST['media_ids'])) : array();
+        if (empty($attachment_ids) || strpos($path, '..') !== false) wp_send_json_error(__('Invalid request.', 'frontend-file-explorer'));
+        
+        $upload_dir = wp_upload_dir();
+        $dest_dir = trailingslashit($upload_dir['basedir']) . 'downloads' . trailingslashit($path);
+        wp_mkdir_p($dest_dir);
+        
+        foreach ($attachment_ids as $id) {
+            $file_path = get_attached_file(intval($id));
+            if ($file_path && file_exists($file_path)) {
+                copy($file_path, trailingslashit($dest_dir) . wp_basename($file_path));
+            }
+        }
+        wp_send_json_success();
+    }
+
     /**
      * Delete item
      */
     public function delete_item() {
-        // Check nonce
-        check_ajax_referer('ffe_nonce', 'nonce');
-        
-        // Check permissions
-        if (!current_user_can('upload_files')) {
-            wp_send_json_error(__('You do not have permission to delete files or folders.', 'ffe'));
-        }
+        check_ajax_referer('frontend_file_explorer_nonce', 'nonce');
+        if (!current_user_can('upload_files')) wp_send_json_error(__('Permission denied.', 'frontend-file-explorer'));
         
         $path = isset($_POST['path']) ? sanitize_text_field(wp_unslash($_POST['path'])) : '';
         $type = isset($_POST['type']) ? sanitize_text_field(wp_unslash($_POST['type'])) : '';
+        if (empty($path) || strpos($path, '..') !== false) wp_send_json_error(__('Invalid path.', 'frontend-file-explorer'));
         
-        if (empty($path) || empty($type)) {
-            wp_send_json_error(__('Invalid request.', 'ffe'));
-        }
+        $upload_dir = wp_upload_dir();
+        $full_path = trailingslashit($upload_dir['basedir']) . 'downloads' . trailingslashit($path);
         
-        // Validate path
-        if (strpos($path, '..') !== false) {
-            wp_send_json_error(__('Invalid path.', 'ffe'));
-        }
+        if (!file_exists($full_path)) wp_send_json_error(__('Item does not exist.', 'frontend-file-explorer'));
         
-        // Get the uploads directory
-        $uploads_dir = wp_upload_dir();
-        $base_dir = $uploads_dir['basedir'] . '/downloads';
-        
-        // Build the full server path
-        $full_path = $base_dir . $path;
-        
-        // Check if the path exists
-        if (!file_exists($full_path)) {
-            wp_send_json_error(__('The specified item does not exist.', 'ffe'));
-        }
-        
-        // Delete the item
         $success = false;
-        if ($type === 'folder') {
-            // Delete folder recursively
+        if ($type === 'folder' || is_dir($full_path)) {
             $success = $this->delete_directory($full_path);
         } else {
-            // Delete file using WordPress function
             $success = wp_delete_file($full_path);
         }
         
-        if ($success) {
-            wp_send_json_success(__('Item deleted successfully.', 'ffe'));
-        } else {
-            wp_send_json_error(__('Failed to delete item.', 'ffe'));
-        }
+        if ($success) wp_send_json_success(__('Item deleted successfully.', 'frontend-file-explorer'));
+        wp_send_json_error(__('Failed to delete item.', 'frontend-file-explorer'));
     }
-    
+
     /**
      * Download as ZIP
      */
     public function download_as_zip() {
-        // Check nonce
-        check_ajax_referer('ffe_nonce', 'nonce');
-        
-        // For frontend, we allow all users to download
-        // No permission check needed for downloading
-        
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended
         $folder_path = isset($_REQUEST['path']) ? sanitize_text_field(wp_unslash($_REQUEST['path'])) : '';
         
-        // Validate path
+        if (empty($folder_path)) {
+            wp_die(esc_html__('No path specified.', 'frontend-file-explorer'));
+        }
+        
         if (strpos($folder_path, '..') !== false) {
-            wp_die(esc_html__('Invalid path.', 'ffe'));
+            wp_die(esc_html__('Invalid path.', 'frontend-file-explorer'));
         }
         
-        // Get the uploads directory
-        $uploads_dir = wp_upload_dir();
-        $base_dir = $uploads_dir['basedir'] . '/downloads';
+        // Get uploads directory explicitly
+        $upload_dir = wp_upload_dir();
+        $basedir = $upload_dir['basedir'];
         
-        // Build the full server path
-        $full_path = $base_dir . $folder_path;
+        // Build path - use trailingslashit for consistency
+        $base_dir = trailingslashit($basedir) . 'downloads';
+        $full_path = trailingslashit($base_dir) . ltrim($folder_path, '/');
         
-        // Check if the path exists
         if (!file_exists($full_path)) {
-            wp_die(esc_html__('The specified item does not exist.', 'ffe'));
+            /* translators: %s: File or folder path that could not be found */
+            wp_die(sprintf(esc_html__('Path does not exist: %s', 'frontend-file-explorer'), esc_html($full_path)));
         }
         
-        // Create a temporary file for the ZIP
-        $temp_file = tempnam(sys_get_temp_dir(), 'zip');
+        // Generate a unique temp file path without pre-creating it on disk
+        $temp_file = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'ffe_' . uniqid('zip_') . '.tmp';
         
-        // Create ZIP file
         $zip = new ZipArchive();
         if ($zip->open($temp_file, ZipArchive::CREATE) !== true) {
-            wp_die(esc_html__('Could not create ZIP file.', 'ffe'));
+            wp_die(esc_html__('Could not create ZIP file.', 'frontend-file-explorer'));
         }
         
-        // Add files to the ZIP
         if (is_dir($full_path)) {
-            // Add directory contents
             $base_name = basename($full_path);
             $this->add_dir_to_zip($zip, $full_path, $base_name);
         } else {
-            // Add single file
             $zip->addFile($full_path, basename($full_path));
         }
         
         $zip->close();
         
-        // Set headers for download
-        header('Content-Type: application/zip');
-        header('Content-Disposition: attachment; filename="' . basename($folder_path) . '.zip"');
-        header('Content-Length: ' . filesize($temp_file));
-        header('Pragma: no-cache');
-        header('Expires: 0');
-        
-        // Initialize WordPress filesystem
-        global $wp_filesystem;
-        if (empty($wp_filesystem)) {
-            require_once(ABSPATH . '/wp-admin/includes/file.php');
-            WP_Filesystem();
+        // Clean output buffer to avoid ERR_INVALID_RESPONSE and corrupted zips
+        while (ob_get_level()) {
+            ob_end_clean();
         }
         
-        // Output the file
-        $wp_filesystem->readfile($temp_file);
+        $download_filename = basename($folder_path);
+        if (empty($download_filename)) {
+            $download_filename = 'folder';
+        }
         
-        // Delete the temporary file
-        wp_delete_file($temp_file);
+        header('Content-Type: application/force-download');
+        header('Content-Disposition: attachment; filename="' . $download_filename . '.zip"');
+        header('Content-Transfer-Encoding: binary');
+        header('Content-Length: ' . filesize($temp_file));
+        header('Cache-Control: private, no-transform, no-store, must-revalidate');
+        
+        // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_readfile
+        readfile($temp_file);
+        
+        // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink
+        @unlink($temp_file);
         
         exit;
     }
@@ -577,43 +316,35 @@ class FFE_Ajax {
      * Get file link
      */
     public function get_file_link() {
-        // Check nonce
-        check_ajax_referer('ffe_nonce', 'nonce');
+        check_ajax_referer('frontend_file_explorer_nonce', 'nonce');
         
         $path = isset($_POST['path']) ? sanitize_text_field(wp_unslash($_POST['path'])) : '';
         
         if (empty($path)) {
-            wp_send_json_error(__('Invalid request.', 'ffe'));
+            wp_send_json_error(__('Invalid request.', 'frontend-file-explorer'));
         }
         
-        // Validate path
         if (strpos($path, '..') !== false) {
-            wp_send_json_error(__('Invalid path.', 'ffe'));
+            wp_send_json_error(__('Invalid path.', 'frontend-file-explorer'));
         }
         
-        // Get the uploads directory
         $uploads_dir = wp_upload_dir();
         $base_dir = $uploads_dir['basedir'] . '/downloads';
-        
-        // Build the full server path
         $full_path = $base_dir . $path;
         
-        // Check if the file exists
         if (!file_exists($full_path) || is_dir($full_path)) {
-            wp_send_json_error(__('The specified file does not exist.', 'ffe'));
+            wp_send_json_error(__('The specified file does not exist.', 'frontend-file-explorer'));
         }
         
-        // Generate the URL
         $url = $uploads_dir['baseurl'] . '/downloads' . $path;
         
         wp_send_json_success($url);
     }
     
     /**
-     * Helper function to delete directory recursively
+     * Delete directory recursively
      */
     private function delete_directory($dir) {
-        // Initialize WordPress filesystem
         global $wp_filesystem;
         if (empty($wp_filesystem)) {
             require_once(ABSPATH . '/wp-admin/includes/file.php');
@@ -650,7 +381,7 @@ class FFE_Ajax {
     }
     
     /**
-     * Helper function to add directory to ZIP
+     * Add directory to ZIP
      */
     private function add_dir_to_zip($zip, $dir, $base_dir) {
         $new_dir = $base_dir;
@@ -658,7 +389,6 @@ class FFE_Ajax {
         $zip->addEmptyDir($new_dir);
         
         foreach (scandir($dir) as $file) {
-            // Skip . and .. directories and index.php files
             if ($file == '.' || $file == '..' || $file == 'index.php' || $file == '.htaccess') {
                 continue;
             }

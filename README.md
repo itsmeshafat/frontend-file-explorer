@@ -99,19 +99,35 @@ The plugin relies only on WordPress core APIs plus the bundled Material Icons st
 
 ### Frontend shortcode
 
-Embed the explorer anywhere (pages, posts, custom post types):
+Embed the user-facing explorer interface on any Page, Post, or Custom Post Type.
+
+#### Basic Usage
+Place the default shortcode anywhere in your content:
 
 ```text
-[frontend_file_explorer folder="/"]
+[frontend_file_explorer]
 ```
+*(This will render the explorer starting at the root storage directory)*
 
 <p align="center">
   <img src="assets/images/frontend.png" alt="File Explorer frontend shortcode output screenshot" width="700" />
 </p>
 
-- `folder` (optional) – starting subdirectory relative to `uploads/downloads`. Use `/` for the root.
-- Visitors can browse folders, download files, and copy direct links.
-- Mutating actions (upload, delete, etc.) remain restricted to logged-in users with the `upload_files` capability.
+#### Advanced Shortcode Attributes
+
+You can explicitly restrict or direct the explorer to a specific starting folder relative to the root `uploads/downloads` directory by using the `folder` attribute:
+
+```text
+[frontend_file_explorer folder="/course-materials"]
+[frontend_file_explorer folder="/clients/acme-corp"]
+```
+
+**What frontend visitors can do:**
+- Browse folders seamlessly
+- Download files directly via one-click
+- Copy public sharing links for assets
+
+**Security Note:** Destructive or mutating backend actions (such as file upload, folder creation, or deletion) are strictly hidden and blocked from public visitors. They remain exclusively accessible only to logged-in administrators possessing the `upload_files` capability.
 
 ## Project structure
 
@@ -154,7 +170,7 @@ templates/
 | Symptom | Likely cause | Fix |
 |---------|--------------|-----|
 | **“You do not have permission” error** | Current user lacks `upload_files` capability | Elevate the role or adjust via a role editor plugin. |
-| **Frontend stays on “Loading…”** | Missing shortcode nonce or cached JS | Clear cache, ensure `[file_explorer]` is rendered, and flush permalinks. |
+| **Frontend stays on “Loading…”** | Missing shortcode nonce or cached JS | Clear cache, ensure `[frontend_file_explorer]` is rendered, and flush permalinks. |
 | **Uploads fail silently** | Server blocks `wp-content/uploads/downloads` writes | Confirm directory permissions (755/775) and PHP upload limits. |
 | **ZIP downloads corrupted** | Hosting disables `ZipArchive` | Enable the PHP `zip` extension or install server support. |
 
@@ -187,6 +203,7 @@ Have a feature request? Open an issue describing the use case.
 
 | Version | Date | Notes |
 |---------|------|-------|
+| 1.0.1 → 1.0.2 | 2026-04-09 | Fixed critical directory listing bug. Patched ZIP generation and Safari caching issues avoiding `ERR_INVALID_RESPONSE`. Activated missing backend handlers enabling all UI frontend upload & import features. Purged strict PCP coding standards and PHPCS security warnings. |
 | 1.0.0 → 1.0.1 | 2025-12-03 | Fixed admin template conditional statements showing as plain text by rewriting the custom template function to use explicit if-else logic for file/folder templates. Added AJAX handler instantiation to ensure proper functionality. |
 | 1.0.1 | 2025-12-03 | Rename plugin to "Frontend File Explorer", align text domain, and improve documentation. |
 | 1.0.0 | 2025-11-30 | Initial public release with admin/ frontend explorers, ZIP downloads, and AJAX tooling. |

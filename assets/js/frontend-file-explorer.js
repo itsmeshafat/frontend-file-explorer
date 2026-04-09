@@ -8,7 +8,7 @@
     class FrontendFileExplorerFrontend {
         constructor() {
             // Properties
-            this.currentPath = '/';
+            this.currentPath = frontendFileExplorerFrontendConfig.folder || '/';
             this.currentPage = 1;
             this.hasMoreItems = false;
             this.isLoading = false;
@@ -43,7 +43,6 @@
         createTemplateFunction(templateId) {
             const templateElement = document.getElementById(templateId);
             if (!templateElement) {
-                console.error('Template not found:', templateId);
                 return data => '';
             }
 
@@ -67,7 +66,6 @@
                     try {
                         return eval(processedCondition) ? content : '';
                     } catch (e) {
-                        console.error('Error evaluating condition:', condition, e);
                         return '';
                     }
                 });
@@ -82,7 +80,6 @@
                     try {
                         return eval(processedCondition) ? content : '';
                     } catch (e) {
-                        console.error('Error evaluating condition:', condition, e);
                         return '';
                     }
                 });
@@ -124,35 +121,30 @@
         loadItems() {
             if (this.isLoading) return;
 
-            console.log('Loading items for path:', this.currentPath, 'page:', this.currentPage);
-
             this.isLoading = true;
             this.showLoading(true);
 
             $.ajax({
-                url: ffeFrontend.ajaxUrl,
+                url: frontendFileExplorerFrontendConfig.ajaxUrl,
                 type: 'POST',
                 data: {
-                    action: 'ffe_frontend_get_folder_contents',
-                    nonce: ffeFrontend.nonce,
+                    action: 'frontend_file_explorer_frontend_get_folder_contents',
+                    nonce: frontendFileExplorerFrontendConfig.nonce,
                     path: this.currentPath,
                     page: this.currentPage
                 },
                 success: (response) => {
-                    console.log('AJAX response:', response);
                     if (response.success) {
                         this.renderItems(response.data, this.currentPage > 1);
                         this.updatePath(response.data.current_path);
                         this.hasMoreItems = response.data.pagination.has_more;
                         this.$loadMore.toggle(this.hasMoreItems);
                     } else {
-                        console.error('AJAX error response:', response.data);
                         this.showError(response.data);
                     }
                 },
-                error: (xhr, status, error) => {
-                    console.error('AJAX error:', status, error);
-                    this.showError(ffeFrontend.strings.error);
+                error: () => {
+                    this.showError(frontendFileExplorerFrontendConfig.strings.error);
                 },
                 complete: () => {
                     this.isLoading = false;
@@ -248,7 +240,6 @@
          * Show error
          */
         showError(message) {
-            console.error('File Explorer Error:', message);
             this.showNotification(message, 'error');
         }
 
@@ -322,9 +313,9 @@
 
             // Open download in new tab
             window.open(
-                ffeFrontend.ajaxUrl +
-                '?action=ffe_frontend_download_as_zip' +
-                '&nonce=' + ffeFrontend.nonce +
+                frontendFileExplorerFrontendConfig.ajaxUrl +
+                '?action=frontend_file_explorer_frontend_download_as_zip' +
+                '&nonce=' + frontendFileExplorerFrontendConfig.nonce +
                 '&path=' + encodeURIComponent(path),
                 '_blank'
             );
@@ -338,9 +329,9 @@
 
             // Open download in new tab
             window.open(
-                ffeFrontend.ajaxUrl +
-                '?action=ffe_frontend_download_as_zip' +
-                '&nonce=' + ffeFrontend.nonce +
+                frontendFileExplorerFrontendConfig.ajaxUrl +
+                '?action=frontend_file_explorer_frontend_download_as_zip' +
+                '&nonce=' + frontendFileExplorerFrontendConfig.nonce +
                 '&path=' + encodeURIComponent(this.currentPath),
                 '_blank'
             );
@@ -358,7 +349,7 @@
 
             // Create a temporary link and click it
             const link = document.createElement('a');
-            link.href = ffeFrontend.uploadsUrl + path;
+            link.href = frontendFileExplorerFrontendConfig.uploadsUrl + path;
             link.download = path.split('/').pop();
             link.target = '_blank';
             document.body.appendChild(link);
@@ -377,11 +368,11 @@
             const path = $item.data('path');
 
             $.ajax({
-                url: ffeFrontend.ajaxUrl,
+                url: frontendFileExplorerFrontendConfig.ajaxUrl,
                 type: 'POST',
                 data: {
-                    action: 'ffe_frontend_get_file_link',
-                    nonce: ffeFrontend.nonce,
+                    action: 'frontend_file_explorer_frontend_get_file_link',
+                    nonce: frontendFileExplorerFrontendConfig.nonce,
                     path: path
                 },
                 success: (response) => {
@@ -394,13 +385,13 @@
                         document.execCommand('copy');
                         document.body.removeChild(tempInput);
 
-                        this.showSuccess(ffeFrontend.strings.copySuccess);
+                        this.showSuccess(frontendFileExplorerFrontendConfig.strings.copySuccess);
                     } else {
                         this.showError(response.data);
                     }
                 },
                 error: () => {
-                    this.showError(ffeFrontend.strings.error);
+                    this.showError(frontendFileExplorerFrontendConfig.strings.error);
                 }
             });
         }
@@ -408,13 +399,7 @@
 
     // Initialize when document is ready
     $(document).ready(function () {
-        console.log('File Explorer Frontend initializing...');
-        try {
-            new FrontendFileExplorerFrontend();
-            console.log('File Explorer Frontend initialized successfully');
-        } catch (error) {
-            console.error('Error initializing File Explorer Frontend:', error);
-        }
+        new FrontendFileExplorerFrontend();
     });
 
 })(jQuery);
