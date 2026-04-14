@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<phpunit
+    bootstrap="tests/bootstrap.php"
+    colors="true"
+    verbose="true"
+    testdox="true"
+>
+    <testsuites>
+        <testsuite name="Frontend File Explorer Test Suite">
+            <directory prefix="test-" suffix=".php">./tests/</directory>
+        </testsuite>
+    </testsuites>
+    <php>
+        <const name="WP_TESTS_PHPUNIT_POLYFILLS_PATH" value="vendor/yoast/phpunit-polyfills" />
+    </php>
+</phpunit>

@@ -2,7 +2,7 @@
 /**
  * Main plugin class
  *
- * @package FrontendFileExplorer
+ * @package Frontend_File_Explorer
  * @since 1.0.0
  */
 
@@ -14,22 +14,22 @@ if (!defined('ABSPATH')) {
 /**
  * Main plugin class
  */
-class FrontendFileExplorer {
+class Frontend_File_Explorer {
 
     /**
      * The single instance of the class.
      *
-     * @var FrontendFileExplorer
+     * @var Frontend_File_Explorer
      * @since 1.0.0
      */
     protected static $_instance = null;
 
     /**
-     * Main FrontendFileExplorer Instance.
+     * Main Frontend_File_Explorer Instance.
      *
      * @since 1.0.0
      * @static
-     * @return FrontendFileExplorer
+     * @return Frontend_File_Explorer
      */
     public static function instance() {
         if (is_null(self::$_instance)) {

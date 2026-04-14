@@ -4,7 +4,7 @@
 (function ($) {
     'use strict';
 
-    class FrontendFileExplorerFrontend {
+    class Frontend_File_Explorer_Frontend {
         constructor() {
             this.currentPath = frontendFileExplorerFrontendConfig.folder || '/';
             this.currentPage = 1;
@@ -286,7 +286,7 @@
     }
 
     $(document).ready(function () {
-        new FrontendFileExplorerFrontend();
+        new Frontend_File_Explorer_Frontend();
     });
 
 })(jQuery);

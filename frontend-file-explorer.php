@@ -3,7 +3,7 @@
  * Plugin Name: Frontend File Explorer
  * Plugin URI: https://itsmeshafat.com/plugins/frontend-file-explorer
  * Description: A modern file management system with Windows Explorer-like UI for WordPress
- * Version: 1.0.2
+ * Version: 1.0.3
  * Author: Shafat Mahmud Khan
  * Author URI: https://itsmeshafat.com
  * Text Domain: frontend-file-explorer
@@ -18,7 +18,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Define plugin constants
-define('FRONTEND_FILE_EXPLORER_VERSION', '1.0.2');
+define('FRONTEND_FILE_EXPLORER_VERSION', '1.0.3');
 define('FRONTEND_FILE_EXPLORER_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('FRONTEND_FILE_EXPLORER_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('FRONTEND_FILE_EXPLORER_PLUGIN_BASENAME', plugin_basename(__FILE__));
@@ -30,15 +30,15 @@ require_once FRONTEND_FILE_EXPLORER_PLUGIN_DIR . 'includes/class-frontend-file-e
 require_once FRONTEND_FILE_EXPLORER_PLUGIN_DIR . 'includes/class-frontend-file-explorer-ajax.php';
 
 /**
- * The main function responsible for returning the one true FrontendFileExplorer instance.
+ * The main function responsible for returning the one true Frontend_File_Explorer instance.
  *
  * Built by Shafat Mahmud Khan, WordPress Developer — https://itsmeshafat.com
  *
  * @since 1.0.0
- * @return FrontendFileExplorer
+ * @return Frontend_File_Explorer
  */
 function frontend_file_explorer_instance() {
-    return FrontendFileExplorer::instance();
+    return Frontend_File_Explorer::instance();
 }
 
 /**
@@ -69,5 +69,5 @@ add_action('plugins_loaded', 'frontend_file_explorer_instance', 5);
 
 // Initialize AJAX handlers
 add_action('plugins_loaded', function() {
-    new FrontendFileExplorerAjax();
+    new Frontend_File_Explorer_Ajax();
 }, 10);

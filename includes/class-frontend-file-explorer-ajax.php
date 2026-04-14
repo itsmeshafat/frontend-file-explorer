@@ -2,7 +2,7 @@
 /**
  * File Explorer AJAX Handler
  *
- * @package FrontendFileExplorer
+ * @package Frontend_File_Explorer
  * @since 1.0.0
  */
 
@@ -14,7 +14,7 @@ if (!defined('ABSPATH')) {
 /**
  * File Explorer AJAX Handler Class
  */
-class FrontendFileExplorerAjax {
+class Frontend_File_Explorer_Ajax {
     /**
      * Constructor
      */

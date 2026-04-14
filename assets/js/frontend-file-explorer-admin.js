@@ -4,7 +4,7 @@
 (function ($) {
     'use strict';
 
-    class FrontendFileExplorerAdmin {
+    class Frontend_File_Explorer_Admin {
         constructor() {
             this.currentPath = '/';
             this.currentPage = 1;
@@ -550,7 +550,7 @@
     }
 
     $(document).ready(function () {
-        new FrontendFileExplorerAdmin();
+        new Frontend_File_Explorer_Admin();
     });
 
 })(jQuery);

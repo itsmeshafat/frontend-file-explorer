@@ -1,7 +1,7 @@
 === Frontend File Explorer ===
 Contributors:      itsmeshafat
 Tested up to:      6.9
-Stable tag:        1.0.2
+Stable tag:        1.0.3
 License:           GPLv2 or later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 Donate link:       https://itsmeshafat.com
@@ -89,6 +89,13 @@ The plugin is fully localization-ready and uses the `frontend-file-explorer` tex
 2. Frontend file explorer embedded via shortcode (frontend view).
 
 == Changelog ==
+
+= 1.0.3 =
+
+* **Security:** Fixed unauthenticated file downloads, arbitrary PHP uploads, XSS via eval(), and server path disclosure.
+* **Standards:** Migrated all filesystem operations to WP_Filesystem API, bundled Material Icons locally, added proper nonce verification and capability checks to all AJAX endpoints.
+* **Standards:** Renamed classes to use WordPress underscore convention (Frontend_File_Explorer, Frontend_File_Explorer_Ajax).
+* **Standards:** Removed discouraged load_plugin_textdomain() call, added proper prefixing to all handles and identifiers.
 
 = 1.0.2 =
 
