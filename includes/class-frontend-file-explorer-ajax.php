@@ -271,10 +271,15 @@ class Frontend_File_Explorer_Ajax {
         $this->ensure_wp_filesystem();
         global $wp_filesystem;
 
-        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- $_FILES cannot be sanitized as a whole; individual file data is validated by wp_handle_upload()
-        $uploaded_files = isset($_FILES['files']) ? $_FILES['files'] : null;
+        $raw_files = isset($_FILES['files']) ? $_FILES['files'] : null;
+
+        if (!is_array($raw_files) || !isset($raw_files['name']) || !is_array($raw_files['name'])) {
+            wp_send_json_error(__('No valid files uploaded.', 'frontend-file-explorer'));
+        }
 
         $allowed_mimes = $this->get_allowed_mime_types();
+        $max_size = absint(get_option('frontend_file_explorer_max_upload_size', wp_max_upload_size()));
+
         $upload_overrides = array(
             'test_form' => false,
             'test_type' => true,
@@ -283,30 +288,81 @@ class Frontend_File_Explorer_Ajax {
 
         $responses = array('files' => array(), 'errors' => array());
 
-        if ($uploaded_files && is_array($uploaded_files['name'])) {
-            $count = count($uploaded_files['name']);
-            for ($i = 0; $i < $count; $i++) {
-                $file = array(
-                    'name'     => $uploaded_files['name'][$i],
-                    'type'     => $uploaded_files['type'][$i],
-                    'tmp_name' => $uploaded_files['tmp_name'][$i],
-                    'error'    => $uploaded_files['error'][$i],
-                    'size'     => $uploaded_files['size'][$i]
-                );
+        $count = count($raw_files['name']);
+        for ($i = 0; $i < $count; $i++) {
+            $file_name = sanitize_file_name(wp_unslash($raw_files['name'][$i]));
+            $file_type = sanitize_mime_type(wp_unslash($raw_files['type'][$i]));
+            $file_tmp  = $raw_files['tmp_name'][$i];
+            $file_error = intval($raw_files['error'][$i]);
+            $file_size = absint($raw_files['size'][$i]);
 
-                $movefile = wp_handle_upload($file, $upload_overrides);
-                if ($movefile && !isset($movefile['error'])) {
-                    $filename = wp_basename($movefile['file']);
-                    $new_file = trailingslashit($dest_dir) . $filename;
-                    $wp_filesystem->move($movefile['file'], $new_file);
-                    $responses['files'][] = array('name' => sanitize_file_name($file['name']));
-                } else {
-                    $responses['errors'][] = sprintf(
-                        /* translators: %s: file name */
-                        esc_html__('Error uploading %s.', 'frontend-file-explorer'),
-                        esc_html($file['name'])
-                    );
-                }
+            if (UPLOAD_ERR_OK !== $file_error) {
+                $responses['errors'][] = sprintf(
+                    /* translators: %s: file name */
+                    esc_html__('Error uploading %s. Code: %d', 'frontend-file-explorer'),
+                    esc_html($file_name),
+                    $file_error
+                );
+                continue;
+            }
+
+            if (empty($file_name) || empty($file_tmp)) {
+                $responses['errors'][] = sprintf(
+                    /* translators: %s: file name */
+                    esc_html__('Invalid file data for %s.', 'frontend-file-explorer'),
+                    esc_html($file_name)
+                );
+                continue;
+            }
+
+            if ($file_size <= 0) {
+                $responses['errors'][] = sprintf(
+                    /* translators: %s: file name */
+                    esc_html__('File %s is empty.', 'frontend-file-explorer'),
+                    esc_html($file_name)
+                );
+                continue;
+            }
+
+            if ($max_size > 0 && $file_size > $max_size) {
+                $responses['errors'][] = sprintf(
+                    /* translators: 1: file name, 2: max size in bytes */
+                    esc_html__('File %1$s exceeds the maximum upload size of %2$d bytes.', 'frontend-file-explorer'),
+                    esc_html($file_name),
+                    $max_size
+                );
+                continue;
+            }
+
+            if (!is_uploaded_file($file_tmp)) {
+                $responses['errors'][] = sprintf(
+                    /* translators: %s: file name */
+                    esc_html__('Security error: invalid upload for %s.', 'frontend-file-explorer'),
+                    esc_html($file_name)
+                );
+                continue;
+            }
+
+            $file = array(
+                'name'     => $file_name,
+                'type'     => $file_type,
+                'tmp_name' => $file_tmp,
+                'error'    => $file_error,
+                'size'     => $file_size,
+            );
+
+            $movefile = wp_handle_upload($file, $upload_overrides);
+            if ($movefile && !isset($movefile['error'])) {
+                $filename = wp_basename($movefile['file']);
+                $new_file = trailingslashit($dest_dir) . $filename;
+                $wp_filesystem->move($movefile['file'], $new_file);
+                $responses['files'][] = array('name' => sanitize_file_name($file['name']));
+            } else {
+                $responses['errors'][] = sprintf(
+                    /* translators: %s: file name */
+                    esc_html__('Error uploading %s.', 'frontend-file-explorer'),
+                    esc_html($file_name)
+                );
             }
         }
 
