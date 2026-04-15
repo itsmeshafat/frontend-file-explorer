@@ -271,6 +271,7 @@ class Frontend_File_Explorer_Ajax {
         $this->ensure_wp_filesystem();
         global $wp_filesystem;
 
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- individual fields sanitized below on lines 293-297
         $raw_files = isset($_FILES['files']) ? $_FILES['files'] : null;
 
         if (!is_array($raw_files) || !isset($raw_files['name']) || !is_array($raw_files['name'])) {
@@ -298,8 +299,8 @@ class Frontend_File_Explorer_Ajax {
 
             if (UPLOAD_ERR_OK !== $file_error) {
                 $responses['errors'][] = sprintf(
-                    /* translators: %s: file name */
-                    esc_html__('Error uploading %s. Code: %d', 'frontend-file-explorer'),
+                    /* translators: 1: file name, 2: error code */
+                    esc_html__('Error uploading %1$s. Code: %2$d', 'frontend-file-explorer'),
                     esc_html($file_name),
                     $file_error
                 );
