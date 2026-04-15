@@ -8,7 +8,7 @@ define('ABSPATH', 'C:\laragon\www\pcp/');
 define('WP_CONTENT_DIR', ABSPATH . 'wp-content/');
 define('WP_PLUGIN_DIR', WP_CONTENT_DIR . 'plugins/');
 
-define('FRONTEND_FILE_EXPLORER_VERSION', '1.0.3');
+define('FRONTEND_FILE_EXPLORER_VERSION', '1.0.4');
 define('FRONTEND_FILE_EXPLORER_PLUGIN_DIR', dirname(__DIR__) . '/');
 define('FRONTEND_FILE_EXPLORER_PLUGIN_URL', 'http://localhost/plugins/frontend-file-explorer/');
 define('FRONTEND_FILE_EXPLORER_PLUGIN_BASENAME', 'frontend-file-explorer/frontend-file-explorer.php');
