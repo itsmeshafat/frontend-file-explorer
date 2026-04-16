@@ -1,7 +1,7 @@
 === Frontend File Explorer ===
 Contributors:      itsmeshafat
 Tested up to:      6.9
-Stable tag:        1.0.4
+Stable tag:        1.0.5
 License:           GPLv2 or later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 Donate link:       https://itsmeshafat.com
@@ -89,6 +89,14 @@ The plugin is fully localization-ready and uses the `frontend-file-explorer` tex
 2. Frontend file explorer embedded via shortcode (frontend view).
 
 == Changelog ==
+
+= 1.0.5 =
+
+* **Security:** Added comprehensive array structure validation for `$_FILES` superglobal before accessing elements.
+* **Security:** Moved `is_uploaded_file()` validation to immediately after accessing tmp_name for improved security.
+* **Security:** Removed PHPCS ignore comment and implemented proper sanitization for file upload handling.
+* **Standards:** Replaced `$_REQUEST` with `$_POST` for AJAX POST requests per WordPress coding standards.
+* **Standards:** Replaced PHP `basename()` with WordPress `wp_basename()` for i18n compatibility with multibyte characters.
 
 = 1.0.4 =
 

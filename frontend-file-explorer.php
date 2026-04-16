@@ -3,7 +3,7 @@
  * Plugin Name: Frontend File Explorer
  * Plugin URI: https://itsmeshafat.com/plugins/frontend-file-explorer
  * Description: A modern file management system with Windows Explorer-like UI for WordPress
- * Version: 1.0.4
+ * Version: 1.0.5
  * Author: Shafat Mahmud Khan
  * Author URI: https://itsmeshafat.com
  * Text Domain: frontend-file-explorer
@@ -18,7 +18,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Define plugin constants
-define('FRONTEND_FILE_EXPLORER_VERSION', '1.0.4');
+define('FRONTEND_FILE_EXPLORER_VERSION', '1.0.5');
 define('FRONTEND_FILE_EXPLORER_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('FRONTEND_FILE_EXPLORER_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('FRONTEND_FILE_EXPLORER_PLUGIN_BASENAME', plugin_basename(__FILE__));

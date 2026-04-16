@@ -255,10 +255,6 @@ class Frontend_File_Explorer_Ajax {
             wp_send_json_error(__('Invalid path.', 'frontend-file-explorer'));
         }
 
-        if (empty($_FILES['files'])) {
-            wp_send_json_error(__('No file uploaded.', 'frontend-file-explorer'));
-        }
-
         $validated = $this->validate_path($path);
         if ($validated === false) {
             wp_send_json_error(__('Invalid path.', 'frontend-file-explorer'));
@@ -271,11 +267,25 @@ class Frontend_File_Explorer_Ajax {
         $this->ensure_wp_filesystem();
         global $wp_filesystem;
 
-        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- individual fields sanitized below on lines 293-297
-        $raw_files = isset($_FILES['files']) ? $_FILES['files'] : null;
+        // Validate $_FILES array structure before access
+        if (!isset($_FILES['files']) || !is_array($_FILES['files'])) {
+            wp_send_json_error(__('No files uploaded.', 'frontend-file-explorer'));
+        }
 
-        if (!is_array($raw_files) || !isset($raw_files['name']) || !is_array($raw_files['name'])) {
-            wp_send_json_error(__('No valid files uploaded.', 'frontend-file-explorer'));
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- array structure validated above, individual fields sanitized below
+        $files = $_FILES['files'];
+
+        // Validate required array keys exist
+        $required_keys = array('name', 'type', 'tmp_name', 'error', 'size');
+        foreach ($required_keys as $key) {
+            if (!isset($files[$key]) || !is_array($files[$key])) {
+                wp_send_json_error(__('Invalid file upload structure.', 'frontend-file-explorer'));
+            }
+        }
+
+        // Validate array is not empty
+        if (empty($files['name'])) {
+            wp_send_json_error(__('No files uploaded.', 'frontend-file-explorer'));
         }
 
         $allowed_mimes = $this->get_allowed_mime_types();
@@ -289,13 +299,23 @@ class Frontend_File_Explorer_Ajax {
 
         $responses = array('files' => array(), 'errors' => array());
 
-        $count = count($raw_files['name']);
+        $count = count($files['name']);
         for ($i = 0; $i < $count; $i++) {
-            $file_name = sanitize_file_name(wp_unslash($raw_files['name'][$i]));
-            $file_type = sanitize_mime_type(wp_unslash($raw_files['type'][$i]));
-            $file_tmp  = $raw_files['tmp_name'][$i];
-            $file_error = intval($raw_files['error'][$i]);
-            $file_size = absint($raw_files['size'][$i]);
+            $file_name = sanitize_file_name(wp_unslash($files['name'][$i]));
+            $file_type = sanitize_mime_type(wp_unslash($files['type'][$i]));
+            $file_tmp  = $files['tmp_name'][$i];
+            $file_error = intval($files['error'][$i]);
+            $file_size = absint($files['size'][$i]);
+
+            // Validate tmp_name is an actual uploaded file IMMEDIATELY
+            if (!is_uploaded_file($file_tmp)) {
+                $responses['errors'][] = sprintf(
+                    /* translators: %s: file name */
+                    esc_html__('Security error: invalid upload for %s.', 'frontend-file-explorer'),
+                    esc_html($file_name)
+                );
+                continue;
+            }
 
             if (UPLOAD_ERR_OK !== $file_error) {
                 $responses['errors'][] = sprintf(
@@ -331,15 +351,6 @@ class Frontend_File_Explorer_Ajax {
                     esc_html__('File %1$s exceeds the maximum upload size of %2$d bytes.', 'frontend-file-explorer'),
                     esc_html($file_name),
                     $max_size
-                );
-                continue;
-            }
-
-            if (!is_uploaded_file($file_tmp)) {
-                $responses['errors'][] = sprintf(
-                    /* translators: %s: file name */
-                    esc_html__('Security error: invalid upload for %s.', 'frontend-file-explorer'),
-                    esc_html($file_name)
                 );
                 continue;
             }
@@ -479,8 +490,8 @@ class Frontend_File_Explorer_Ajax {
      * Process download as ZIP
      */
     private function process_download_as_zip() {
-        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- nonce verified in calling public methods download_as_zip() and frontend_download_as_zip()
-        $folder_path = isset($_REQUEST['path']) ? sanitize_text_field(wp_unslash($_REQUEST['path'])) : '';
+        // phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce verified in calling public methods download_as_zip() and frontend_download_as_zip()
+        $folder_path = isset($_POST['path']) ? sanitize_text_field(wp_unslash($_POST['path'])) : '';
 
         if (empty($folder_path)) {
             wp_die(esc_html__('No path specified.', 'frontend-file-explorer'));
@@ -512,10 +523,10 @@ class Frontend_File_Explorer_Ajax {
         }
 
         if ($wp_filesystem->is_dir($full_path)) {
-            $base_name = basename($full_path);
+            $base_name = wp_basename($full_path);
             $this->add_dir_to_zip($zip, $full_path, $base_name);
         } else {
-            $zip->addFile($full_path, basename($full_path));
+            $zip->addFile($full_path, wp_basename($full_path));
         }
 
         $zip->close();
@@ -524,7 +535,7 @@ class Frontend_File_Explorer_Ajax {
             ob_end_clean();
         }
 
-        $download_filename = sanitize_file_name(basename($folder_path));
+        $download_filename = sanitize_file_name(wp_basename($folder_path));
         if (empty($download_filename)) {
             $download_filename = 'folder';
         }
