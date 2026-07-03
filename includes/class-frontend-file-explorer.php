@@ -119,6 +119,20 @@ class Frontend_File_Explorer {
     }
 
     /**
+     * Get default sort preference
+     */
+    private function get_default_sort() {
+        $saved = get_option('frontend_file_explorer_default_sort', array());
+        if (!is_array($saved) || empty($saved['sort_by'])) {
+            return array('sort_by' => 'name', 'sort_dir' => 'asc');
+        }
+        return array(
+            'sort_by' => in_array($saved['sort_by'], array('name', 'modified', 'size', 'type'), true) ? $saved['sort_by'] : 'name',
+            'sort_dir' => in_array($saved['sort_dir'], array('asc', 'desc'), true) ? $saved['sort_dir'] : 'asc',
+        );
+    }
+
+    /**
      * Add admin menu
      */
     public function add_admin_menu() {
@@ -150,14 +164,14 @@ class Frontend_File_Explorer {
 
         wp_enqueue_style(
             'frontend-file-explorer-material-icons',
-            FRONTEND_FILE_EXPLORER_PLUGIN_URL . 'assets/css/material-icons.css',
+            FRONTEND_FILE_EXPLORER_PLUGIN_URL . 'assets/material-icons.css',
             array(),
             FRONTEND_FILE_EXPLORER_VERSION
         );
 
         wp_enqueue_style(
             'frontend-file-explorer-admin-style',
-            FRONTEND_FILE_EXPLORER_PLUGIN_URL . 'assets/css/frontend-file-explorer-admin.css',
+            FRONTEND_FILE_EXPLORER_PLUGIN_URL . 'assets/frontend-file-explorer-admin.css',
             array(),
             FRONTEND_FILE_EXPLORER_VERSION
         );
@@ -170,10 +184,13 @@ class Frontend_File_Explorer {
             true
         );
 
+        $default_sort = $this->get_default_sort();
+
         wp_localize_script('frontend-file-explorer-admin-script', 'frontendFileExplorerAdminConfig', array(
             'ajaxUrl' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('frontend_file_explorer_nonce'),
             'uploadsUrl' => FRONTEND_FILE_EXPLORER_UPLOADS_URL,
+            'defaultSort' => $default_sort,
             'strings' => array(
                 'confirmDelete' => __('Are you sure you want to delete this item?', 'frontend-file-explorer'),
                 'createFolder' => __('Create Folder', 'frontend-file-explorer'),
@@ -181,6 +198,7 @@ class Frontend_File_Explorer {
                 'upload' => __('Upload Files', 'frontend-file-explorer'),
                 'selectFiles' => __('Select Files', 'frontend-file-explorer'),
                 'noFilesSelected' => __('No files selected. Please select files to upload.', 'frontend-file-explorer'),
+                'pending' => __('Pending', 'frontend-file-explorer'),
                 'loading' => __('Loading...', 'frontend-file-explorer'),
                 'copySuccess' => __('Link copied to clipboard!', 'frontend-file-explorer'),
                 'copyError' => __('Failed to copy link. Please try again.', 'frontend-file-explorer'),
@@ -194,6 +212,7 @@ class Frontend_File_Explorer {
                 'downloadZip' => __('Download as ZIP', 'frontend-file-explorer'),
                 'delete' => __('Delete', 'frontend-file-explorer'),
                 'copyLink' => __('Copy Link', 'frontend-file-explorer'),
+                'sortSaved' => __('Sort preference saved', 'frontend-file-explorer'),
             )
         ));
 
@@ -221,14 +240,14 @@ class Frontend_File_Explorer {
     private function enqueue_frontend_scripts($folder = '/') {
         wp_enqueue_style(
             'frontend-file-explorer-material-icons',
-            FRONTEND_FILE_EXPLORER_PLUGIN_URL . 'assets/css/material-icons.css',
+            FRONTEND_FILE_EXPLORER_PLUGIN_URL . 'assets/material-icons.css',
             array(),
             FRONTEND_FILE_EXPLORER_VERSION
         );
 
         wp_enqueue_style(
             'frontend-file-explorer-frontend-style',
-            FRONTEND_FILE_EXPLORER_PLUGIN_URL . 'assets/css/frontend-file-explorer.css',
+            FRONTEND_FILE_EXPLORER_PLUGIN_URL . 'assets/frontend-file-explorer.css',
             array(),
             FRONTEND_FILE_EXPLORER_VERSION
         );
@@ -241,11 +260,14 @@ class Frontend_File_Explorer {
             true
         );
 
+        $default_sort = $this->get_default_sort();
+
         wp_localize_script('frontend-file-explorer-frontend-script', 'frontendFileExplorerFrontendConfig', array(
             'ajaxUrl' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('frontend_file_explorer_nonce'),
             'uploadsUrl' => FRONTEND_FILE_EXPLORER_UPLOADS_URL,
             'folder' => $folder,
+            'defaultSort' => $default_sort,
             'strings' => array(
                 'downloadZip' => __('Download as ZIP', 'frontend-file-explorer'),
                 'open' => __('Open', 'frontend-file-explorer'),

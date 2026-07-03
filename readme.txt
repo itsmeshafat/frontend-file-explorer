@@ -1,11 +1,13 @@
 === Frontend File Explorer ===
 Contributors:      itsmeshafat
-Tested up to:      6.9
-Stable tag:        1.0.5
+Requires at least: 5.6
+Requires PHP:      7.4
+Tested up to:      7.0
+Stable tag:        1.0.7
 License:           GPLv2 or later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 Donate link:       https://itsmeshafat.com
-Tags:              file manager, file explorer, downloads, frontend, media library
+Tags:              file manager, files, downloads, frontend, media library
 
 A modern, Windows Explorer–inspired file manager for WordPress with admin interface and frontend shortcode.
 
@@ -50,6 +52,28 @@ The plugin provides a seamless experience for both administrators and frontend u
 * Agencies and freelancers who share files with clients.
 * Site owners who want a lightweight, Explorer-like file manager in WordPress.
 
+== Upgrade Notice ==
+
+= 1.0.7 =
+
+This release adds server-side sorting and an admin shortcode reference panel. No manual action is required.
+
+= 1.0.6 =
+
+This release includes a redesigned admin interface and multiple bug fixes. No manual action is required.
+
+= 1.0.5 =
+
+This release includes important security improvements and coding standards updates. No manual action is required.
+
+= 1.0.4 =
+
+This release includes security enhancements for file upload handling. No manual action is required.
+
+= 1.0.3 =
+
+This is a major security release addressing multiple vulnerabilities. Please update immediately. No manual action is required.
+
 == Installation ==
 
 = Installation from within WordPress =
@@ -89,6 +113,28 @@ The plugin is fully localization-ready and uses the `frontend-file-explorer` tex
 2. Frontend file explorer embedded via shortcode (frontend view).
 
 == Changelog ==
+
+= 1.0.7 =
+
+* **Feature:** Added server-side sorting for folder/file listings (Name, Date Modified, Size, Type, asc/desc).
+* **Feature:** Admin can set a default sort order that persists for frontend visitors.
+* **Feature:** Added shortcode reference panel with copyable code snippets below the admin explorer.
+* **Feature:** Frontend explorer now respects the admin-configured default sort order.
+* **UI:** Modernized shortcode & tips card with dark code blocks, hover effects, tooltip copy feedback.
+
+= 1.0.6 =
+
+* **UI:** Redesigned admin interface with modern styling, CSS custom properties, card-based grid, smoother transitions, and responsive layouts.
+* **UI:** Replaced browser alerts with styled toast notifications for success/error messages.
+* **UI:** Added file-type color coding for PDFs, Word docs, Excel files, and archives.
+* **UI:** Improved modal design with backdrop blur, scale animation, and Escape-key dismissal.
+* **Fix:** Fixed broken CSS asset paths preventing Material Icons and all styles from loading.
+* **Fix:** Fixed Material Icons font URL resolution in bundled stylesheet.
+* **Fix:** Fixed duplicate element ID causing toolbar button text to disappear on upload modal open.
+* **Fix:** Fixed infinite recursion crash when clicking upload dropzone.
+* **Fix:** Fixed "Upload Files" button incorrectly opening Media Library instead of the upload modal.
+* **Fix:** Fixed ZIP download failing with "No path specified" (GET vs POST mismatch).
+* **Fix:** Fixed trailing comma syntax error in admin JavaScript class method.
 
 = 1.0.5 =
 

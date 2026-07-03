@@ -2,7 +2,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/WordPress-Plugin-blue?logo=wordpress" alt="WordPress badge" />
-  <img src="https://img.shields.io/badge/Tested%20up%20to-6.9-green" alt="WP compatibility badge" />
+  <img src="https://img.shields.io/badge/Tested%20up%20to-7.0-green" alt="WP compatibility badge" />
   <img src="https://img.shields.io/badge/PHP-7.4%2B-8892BF?logo=php" alt="PHP version badge" />
   <img src="https://img.shields.io/badge/License-GPL%20v2%2B-orange" alt="License badge" />
 </p>
@@ -33,7 +33,7 @@
 ## Features
 
 <p align="center">
-  <img src="assets/images/backend.jpg" alt="File Explorer admin interface screenshot" width="700" />
+  <img src="assets/images/backend.png" alt="File Explorer admin interface screenshot" width="700" />
 </p>
 
 Frontend File Explorer is a modern, Windows Explorer–inspired file manager for WordPress. It gives you a clean admin interface to organize and share files plus a responsive frontend explorer powered by a simple shortcode.
@@ -203,6 +203,8 @@ Have a feature request? Open an issue describing the use case.
 
 | Version | Date | Notes |
 |---------|------|-------|
+| 1.0.6 → 1.0.7 | 2026-07-03 | Added server-side sorting (Name, Date Modified, Size, Type) with admin default sort persistence. Added shortcode reference panel with copy-to-clipboard below the admin explorer. |
+| 1.0.5 → 1.0.6 | 2026-06-05 | Redesigned admin UI with modern styling, CSS custom properties, toast notifications, and file-type color coding. Fixed broken CSS asset paths, Material Icons font, duplicate element ID crash, upload dropzone recursion, upload modal routing, ZIP download (GET vs POST), and class method syntax error. |
 | 1.0.1 → 1.0.2 | 2026-04-09 | Fixed critical directory listing bug. Patched ZIP generation and Safari caching issues avoiding `ERR_INVALID_RESPONSE`. Activated missing backend handlers enabling all UI frontend upload & import features. Purged strict PCP coding standards and PHPCS security warnings. |
 | 1.0.0 → 1.0.1 | 2025-12-03 | Fixed admin template conditional statements showing as plain text by rewriting the custom template function to use explicit if-else logic for file/folder templates. Added AJAX handler instantiation to ensure proper functionality. |
 | 1.0.1 | 2025-12-03 | Rename plugin to "Frontend File Explorer", align text domain, and improve documentation. |

@@ -11,6 +11,10 @@
             this.hasMoreItems = false;
             this.isLoading = false;
 
+            var defaultSort = frontendFileExplorerFrontendConfig.defaultSort || {};
+            this.sortBy = defaultSort.sort_by || 'name';
+            this.sortDir = defaultSort.sort_dir || 'asc';
+
             this.$container = $('.frontend-file-explorer-frontend-container');
             this.$items = $('#frontend-file-explorer-frontend-items');
             this.$empty = $('#frontend-file-explorer-frontend-empty');
@@ -57,7 +61,9 @@
                     action: 'frontend_file_explorer_frontend_get_folder_contents',
                     nonce: frontendFileExplorerFrontendConfig.nonce,
                     path: this.currentPath,
-                    page: this.currentPage
+                    page: this.currentPage,
+                    sort_by: this.sortBy,
+                    sort_dir: this.sortDir
                 },
                 success: (response) => {
                     if (response.success) {

@@ -33,6 +33,7 @@ class Frontend_File_Explorer_Ajax {
         add_action('wp_ajax_frontend_file_explorer_delete_item', array($this, 'delete_item'));
         add_action('wp_ajax_frontend_file_explorer_download_as_zip', array($this, 'download_as_zip'));
         add_action('wp_ajax_frontend_file_explorer_get_file_link', array($this, 'get_file_link'));
+        add_action('wp_ajax_frontend_file_explorer_save_sort_preference', array($this, 'save_sort_preference'));
 
         add_action('wp_ajax_frontend_file_explorer_frontend_get_folder_contents', array($this, 'frontend_get_folder_contents'));
         add_action('wp_ajax_nopriv_frontend_file_explorer_frontend_get_folder_contents', array($this, 'frontend_get_folder_contents'));
@@ -153,6 +154,9 @@ class Frontend_File_Explorer_Ajax {
         // phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce verified in calling public methods get_folder_contents() and frontend_get_folder_contents()
         $folder_path = isset($_POST['path']) ? sanitize_text_field(wp_unslash($_POST['path'])) : '/';
 
+        $sort_by = isset($_POST['sort_by']) ? sanitize_text_field(wp_unslash($_POST['sort_by'])) : 'name';
+        $sort_dir = isset($_POST['sort_dir']) ? sanitize_text_field(wp_unslash($_POST['sort_dir'])) : 'asc';
+
         $upload_dir = wp_upload_dir();
         $base_dir = trailingslashit($upload_dir['basedir']) . 'downloads';
         $base_url = trailingslashit($upload_dir['baseurl']) . 'downloads';
@@ -182,15 +186,22 @@ class Frontend_File_Explorer_Ajax {
 
                 $item_path = trailingslashit($full_path) . $file;
                 $is_dir = $fileinfo['type'] === 'd';
+                $ext = $is_dir ? '' : strtolower(pathinfo($file, PATHINFO_EXTENSION));
 
                 $items[] = array(
                     'name' => $file,
                     'path' => trailingslashit(rtrim($folder_path, '/')) . $file,
                     'type' => $is_dir ? 'folder' : 'file',
-                    'extension' => $is_dir ? '' : strtolower(pathinfo($file, PATHINFO_EXTENSION)),
+                    'extension' => $ext,
+                    'size' => $is_dir ? 0 : ($fileinfo['size'] ? (int) $fileinfo['size'] : 0),
+                    'modified' => $is_dir ? 0 : ($fileinfo['lastmodunix'] ? (int) $fileinfo['lastmodunix'] : 0),
                     'url' => $is_dir ? '' : trailingslashit($base_url) . ltrim(trailingslashit(rtrim($folder_path, '/')) . $file, '/')
                 );
             }
+        }
+
+        if (!empty($items)) {
+            $items = $this->sort_items($items, $sort_by, $sort_dir);
         }
 
         wp_send_json_success(array(
@@ -491,7 +502,7 @@ class Frontend_File_Explorer_Ajax {
      */
     private function process_download_as_zip() {
         // phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce verified in calling public methods download_as_zip() and frontend_download_as_zip()
-        $folder_path = isset($_POST['path']) ? sanitize_text_field(wp_unslash($_POST['path'])) : '';
+        $folder_path = isset($_GET['path']) ? sanitize_text_field(wp_unslash($_GET['path'])) : '';
 
         if (empty($folder_path)) {
             wp_die(esc_html__('No path specified.', 'frontend-file-explorer'));
@@ -615,6 +626,91 @@ class Frontend_File_Explorer_Ajax {
         $url = esc_url($uploads_dir['baseurl'] . '/downloads' . $path);
 
         wp_send_json_success($url);
+    }
+
+    /**
+     * Save default sort preference (admin only)
+     */
+    public function save_sort_preference() {
+        check_ajax_referer('frontend_file_explorer_nonce', 'nonce');
+        if (!current_user_can('upload_files')) {
+            wp_send_json_error(__('Permission denied.', 'frontend-file-explorer'));
+        }
+
+        $sort_by = isset($_POST['sort_by']) ? sanitize_text_field(wp_unslash($_POST['sort_by'])) : 'name';
+        $sort_dir = isset($_POST['sort_dir']) ? sanitize_text_field(wp_unslash($_POST['sort_dir'])) : 'asc';
+
+        if (!in_array($sort_by, array('name', 'modified', 'size', 'type'), true)) {
+            wp_send_json_error(__('Invalid sort parameter.', 'frontend-file-explorer'));
+        }
+
+        if (!in_array($sort_dir, array('asc', 'desc'), true)) {
+            wp_send_json_error(__('Invalid sort direction.', 'frontend-file-explorer'));
+        }
+
+        update_option('frontend_file_explorer_default_sort', array(
+            'sort_by' => $sort_by,
+            'sort_dir' => $sort_dir,
+        ));
+
+        wp_send_json_success();
+    }
+
+    /**
+     * Sort items by criteria
+     */
+    private function sort_items($items, $sort_by = 'name', $sort_dir = 'asc') {
+        $folders = array();
+        $files = array();
+
+        foreach ($items as $item) {
+            if ($item['type'] === 'folder') {
+                $folders[] = $item;
+            } else {
+                $files[] = $item;
+            }
+        }
+
+        usort($folders, function ($a, $b) use ($sort_by, $sort_dir) {
+            return $this->compare_items($a, $b, $sort_by, $sort_dir);
+        });
+
+        usort($files, function ($a, $b) use ($sort_by, $sort_dir) {
+            return $this->compare_items($a, $b, $sort_by, $sort_dir);
+        });
+
+        return array_merge($folders, $files);
+    }
+
+    /**
+     * Compare two items for sorting
+     */
+    private function compare_items($a, $b, $sort_by, $sort_dir) {
+        $result = 0;
+
+        switch ($sort_by) {
+            case 'name':
+                $result = strcasecmp($a['name'], $b['name']);
+                break;
+
+            case 'modified':
+                $a_val = isset($a['modified']) ? (int) $a['modified'] : 0;
+                $b_val = isset($b['modified']) ? (int) $b['modified'] : 0;
+                $result = $a_val - $b_val;
+                break;
+
+            case 'size':
+                $a_val = isset($a['size']) ? (int) $a['size'] : 0;
+                $b_val = isset($b['size']) ? (int) $b['size'] : 0;
+                $result = $a_val - $b_val;
+                break;
+
+            case 'type':
+                $result = strcasecmp($a['extension'] ?: '', $b['extension'] ?: '');
+                break;
+        }
+
+        return ($sort_dir === 'desc') ? -$result : $result;
     }
 
     /**

@@ -12,6 +12,10 @@
             this.isLoading = false;
             this.uploadFiles = [];
 
+            var defaultSort = frontendFileExplorerAdminConfig.defaultSort || {};
+            this.sortBy = defaultSort.sort_by || 'name';
+            this.sortDir = defaultSort.sort_dir || 'asc';
+
             this.$container = $('.frontend-file-explorer-container');
             this.$items = $('#frontend-file-explorer-items');
             this.$empty = $('#frontend-file-explorer-empty');
@@ -27,7 +31,19 @@
 
         init() {
             this.bindEvents();
+            this.initSortControls();
             this.loadItems();
+        }
+
+        initSortControls() {
+            $('#frontend-file-explorer-sort-select').val(this.sortBy);
+            this.updateSortDirIcon();
+        }
+
+        updateSortDirIcon() {
+            var $btn = $('#frontend-file-explorer-sort-dir');
+            var icon = this.sortDir === 'asc' ? 'arrow_upward' : 'arrow_downward';
+            $btn.find('.material-icons').text(icon);
         }
 
         bindEvents() {
@@ -53,6 +69,24 @@
             $('#frontend-file-explorer-upload-submit').on('click', this.uploadSelectedFiles.bind(this));
             $('#frontend-file-explorer-upload-cancel, .frontend-file-explorer-modal-close').on('click', this.closeModals.bind(this));
 
+            $('#frontend-file-explorer-sort-select').on('change', this.handleSortChange.bind(this));
+            $('#frontend-file-explorer-sort-dir').on('click', this.handleSortDirToggle.bind(this));
+            $('#frontend-file-explorer-sort-save').on('click', this.handleSortSave.bind(this));
+
+            $('.frontend-file-explorer-copy-btn').on('click', this.handleCopyShortcode.bind(this));
+
+            $(document).on('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    this.closeModals();
+                }
+            });
+
+            $(document).on('click', '.frontend-file-explorer-modal', (e) => {
+                if ($(e.target).hasClass('frontend-file-explorer-modal')) {
+                    this.closeModals();
+                }
+            });
+
             var $dropzone = $('#frontend-file-explorer-dropzone');
             $dropzone.on('dragover', function (e) {
                 e.preventDefault();
@@ -73,8 +107,22 @@
 
                 var files = e.originalEvent.dataTransfer.files;
                 if (files.length) {
-                    this.handleFileSelection({ target: { files: files } });
+                    this.handleFileSelection(files);
                 }
+            });
+
+            $('#frontend-file-explorer-file-input').on('click', function (e) {
+                e.stopPropagation();
+            });
+
+            $('#frontend-file-explorer-file-input').on('change', (e) => {
+                if (e.target.files.length) {
+                    this.handleFileSelection(e.target.files);
+                }
+            });
+
+            $dropzone.on('click', function () {
+                $('#frontend-file-explorer-file-input').trigger('click');
             });
         }
 
@@ -91,7 +139,9 @@
                     action: 'frontend_file_explorer_get_folder_contents',
                     nonce: frontendFileExplorerAdminConfig.nonce,
                     path: this.currentPath,
-                    page: this.currentPage
+                    page: this.currentPage,
+                    sort_by: this.sortBy,
+                    sort_dir: this.sortDir
                 },
                 success: (response) => {
                     if (response.success) {
@@ -180,11 +230,36 @@
         }
 
         showError(message) {
-            alert(message);
+            if (typeof message === 'string') {
+                this.showNotification(message, 'error');
+            }
         }
 
         showSuccess(message) {
-            alert(message);
+            if (typeof message === 'string') {
+                this.showNotification(message, 'success');
+            }
+        }
+
+        showNotification(message, type) {
+            $('.ffe-notification').remove();
+
+            var html = '<div class="ffe-notification ' + type + '">' +
+                '<span class="ffe-notification-icon material-icons">' + (type === 'success' ? 'check_circle' : 'error') + '</span>' +
+                '<span class="ffe-notification-message">' + $('<div>').text(message).html() + '</span>' +
+                '</div>';
+
+            $('body').append(html);
+            setTimeout(function () {
+                $('.ffe-notification').addClass('show');
+            }, 10);
+
+            setTimeout(function () {
+                $('.ffe-notification').removeClass('show');
+                setTimeout(function () {
+                    $('.ffe-notification').remove();
+                }, 300);
+            }, 3000);
         }
 
         handleFolderClick(e) {
@@ -334,7 +409,8 @@
 
         showCreateFolderModal() {
             $('#frontend-file-explorer-folder-name').val('');
-            $('#frontend-file-explorer-create-folder-modal').show();
+            $('#frontend-file-explorer-create-folder-modal').css('display', 'flex');
+            setTimeout(() => $('#frontend-file-explorer-folder-name').trigger('focus'), 100);
         }
 
         createFolder() {
@@ -375,28 +451,33 @@
         }
 
         showUploadModal() {
-            var mediaFrame = wp.media({
-                title: frontendFileExplorerAdminConfig.strings.uploadFiles || 'Upload Files',
-                button: {
-                    text: frontendFileExplorerAdminConfig.strings.upload || 'Upload'
-                },
-                multiple: true
+            this.uploadFiles = [];
+            $('#frontend-file-explorer-upload-progress').hide();
+            $('#frontend-file-explorer-upload-file-list').empty();
+            $('#frontend-file-explorer-file-input').val('');
+            $('#frontend-file-explorer-upload-modal').css('display', 'flex');
+        }
+
+        handleFileSelection(files) {
+            this.uploadFiles = Array.from(files);
+            var $list = $('#frontend-file-explorer-upload-file-list');
+            $list.empty();
+
+            this.uploadFiles.forEach(function (file) {
+                var size = file.size > 1048576
+                    ? (file.size / 1048576).toFixed(1) + ' MB'
+                    : (file.size / 1024).toFixed(1) + ' KB';
+
+                var $item = $(
+                    '<div class="frontend-file-explorer-upload-file">' +
+                        '<span class="frontend-file-explorer-upload-file-name">' + $('<div>').text(file.name).html() + '</span>' +
+                        '<span class="frontend-file-explorer-upload-file-size">' + size + '</span>' +
+                        '<span class="frontend-file-explorer-upload-file-status">' + $('<div>').text(frontendFileExplorerAdminConfig.strings.pending).html() + '</span>' +
+                    '</div>'
+                );
+
+                $list.append($item);
             });
-
-            mediaFrame.on('select', () => {
-                var selection = mediaFrame.state().get('selection');
-                var mediaIds = [];
-
-                selection.forEach((attachment) => {
-                    mediaIds.push(attachment.get('id'));
-                });
-
-                if (mediaIds.length > 0) {
-                    this.addMediaFilesToFolder(mediaIds);
-                }
-            });
-
-            mediaFrame.open();
         }
 
         addMediaFilesToFolder(mediaIds) {
@@ -544,8 +625,82 @@
             frame.open();
         }
 
+        handleSortChange() {
+            this.sortBy = $('#frontend-file-explorer-sort-select').val();
+            this.currentPage = 1;
+            this.loadItems();
+        }
+
+        handleSortDirToggle() {
+            this.sortDir = this.sortDir === 'asc' ? 'desc' : 'asc';
+            this.updateSortDirIcon();
+            this.currentPage = 1;
+            this.loadItems();
+        }
+
+        handleCopyShortcode(e) {
+            var btn = $(e.currentTarget);
+            var text = btn.data('copy');
+
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(() => {
+                    this.showCopiedFeedback(btn);
+                }).catch(() => {
+                    this.fallbackCopy(text, btn);
+                });
+            } else {
+                this.fallbackCopy(text, btn);
+            }
+        }
+
+        fallbackCopy(text, btn) {
+            var textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            this.showCopiedFeedback(btn);
+        }
+
+        showCopiedFeedback(btn) {
+            btn.addClass('copied');
+            var originalIcon = btn.find('.material-icons').text();
+            btn.find('.material-icons').text('check');
+
+            setTimeout(() => {
+                btn.removeClass('copied');
+                btn.find('.material-icons').text(originalIcon);
+            }, 2000);
+        }
+
+        handleSortSave() {
+            $.ajax({
+                url: frontendFileExplorerAdminConfig.ajaxUrl,
+                type: 'POST',
+                data: {
+                    action: 'frontend_file_explorer_save_sort_preference',
+                    nonce: frontendFileExplorerAdminConfig.nonce,
+                    sort_by: this.sortBy,
+                    sort_dir: this.sortDir
+                },
+                success: (response) => {
+                    if (response.success) {
+                        this.showSuccess(frontendFileExplorerAdminConfig.strings.sortSaved || 'Sort preference saved');
+                    } else {
+                        this.showError(response.data);
+                    }
+                },
+                error: () => {
+                    this.showError(frontendFileExplorerAdminConfig.strings.error);
+                }
+            });
+        }
+
         closeModals() {
-            $('.frontend-file-explorer-modal').hide();
+            $('.frontend-file-explorer-modal').css('display', 'none');
         }
     }
 
