@@ -34,6 +34,7 @@ class Frontend_File_Explorer_Ajax {
         add_action('wp_ajax_frontend_file_explorer_download_as_zip', array($this, 'download_as_zip'));
         add_action('wp_ajax_frontend_file_explorer_get_file_link', array($this, 'get_file_link'));
         add_action('wp_ajax_frontend_file_explorer_save_sort_preference', array($this, 'save_sort_preference'));
+        add_action('wp_ajax_frontend_file_explorer_save_credits_preference', array($this, 'save_credits_preference'));
 
         add_action('wp_ajax_frontend_file_explorer_frontend_get_folder_contents', array($this, 'frontend_get_folder_contents'));
         add_action('wp_ajax_nopriv_frontend_file_explorer_frontend_get_folder_contents', array($this, 'frontend_get_folder_contents'));
@@ -652,6 +653,18 @@ class Frontend_File_Explorer_Ajax {
             'sort_by' => $sort_by,
             'sort_dir' => $sort_dir,
         ));
+
+        wp_send_json_success();
+    }
+
+    public function save_credits_preference() {
+        check_ajax_referer('frontend_file_explorer_nonce', 'nonce');
+        if (!current_user_can('upload_files')) {
+            wp_send_json_error(__('Permission denied.', 'frontend-file-explorer'));
+        }
+
+        $hide = isset($_POST['hide_credits']) && 'true' === sanitize_text_field(wp_unslash($_POST['hide_credits']));
+        update_option('frontend_file_explorer_hide_credits', $hide);
 
         wp_send_json_success();
     }

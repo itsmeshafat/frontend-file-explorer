@@ -54,6 +54,8 @@ class Frontend_File_Explorer {
         add_action('admin_enqueue_scripts', array($this, 'admin_enqueue_scripts'));
 
         add_shortcode('frontend_file_explorer', array($this, 'frontend_file_explorer_shortcode'));
+
+        add_filter('plugin_row_meta', array($this, 'add_plugin_row_meta'), 10, 2);
     }
 
     /**
@@ -133,6 +135,24 @@ class Frontend_File_Explorer {
     }
 
     /**
+     * Get hide credits preference
+     */
+    private function get_hide_credits() {
+        return (bool) get_option('frontend_file_explorer_hide_credits', false);
+    }
+
+    /**
+     * Add plugin row meta links
+     */
+    public function add_plugin_row_meta($links, $file) {
+        if (FRONTEND_FILE_EXPLORER_PLUGIN_BASENAME === $file) {
+            $links[] = '<a href="https://www.buymeacoffee.com/itsmeshafat" target="_blank" rel="noopener noreferrer">' .
+                       esc_html__('Buy me a coffee', 'frontend-file-explorer') . '</a>';
+        }
+        return $links;
+    }
+
+    /**
      * Add admin menu
      */
     public function add_admin_menu() {
@@ -151,6 +171,7 @@ class Frontend_File_Explorer {
      * Render admin page
      */
     public function render_admin_page() {
+        $hide_credits = $this->get_hide_credits();
         include FRONTEND_FILE_EXPLORER_PLUGIN_DIR . 'templates/frontend-file-explorer-admin.php';
     }
 
@@ -185,12 +206,14 @@ class Frontend_File_Explorer {
         );
 
         $default_sort = $this->get_default_sort();
+        $hide_credits = $this->get_hide_credits();
 
         wp_localize_script('frontend-file-explorer-admin-script', 'frontendFileExplorerAdminConfig', array(
             'ajaxUrl' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('frontend_file_explorer_nonce'),
             'uploadsUrl' => FRONTEND_FILE_EXPLORER_UPLOADS_URL,
             'defaultSort' => $default_sort,
+            'hideCredits' => $hide_credits,
             'strings' => array(
                 'confirmDelete' => __('Are you sure you want to delete this item?', 'frontend-file-explorer'),
                 'createFolder' => __('Create Folder', 'frontend-file-explorer'),
@@ -213,6 +236,7 @@ class Frontend_File_Explorer {
                 'delete' => __('Delete', 'frontend-file-explorer'),
                 'copyLink' => __('Copy Link', 'frontend-file-explorer'),
                 'sortSaved' => __('Sort preference saved', 'frontend-file-explorer'),
+                'creditsSaved' => __('Setting saved', 'frontend-file-explorer'),
             )
         ));
 
@@ -228,6 +252,8 @@ class Frontend_File_Explorer {
         ), $atts, 'frontend_file_explorer');
 
         $this->enqueue_frontend_scripts($atts['folder']);
+
+        $hide_credits = $this->get_hide_credits();
 
         ob_start();
         include FRONTEND_FILE_EXPLORER_PLUGIN_DIR . 'templates/frontend-file-explorer-shortcode.php';

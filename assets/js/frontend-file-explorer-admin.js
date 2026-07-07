@@ -75,6 +75,8 @@
 
             $('.frontend-file-explorer-copy-btn').on('click', this.handleCopyShortcode.bind(this));
 
+            $('#frontend-file-explorer-hide-credits').on('change', this.handleCreditsToggle.bind(this));
+
             $(document).on('keydown', (e) => {
                 if (e.key === 'Escape') {
                     this.closeModals();
@@ -636,6 +638,40 @@
             this.updateSortDirIcon();
             this.currentPage = 1;
             this.loadItems();
+        }
+
+        handleCreditsToggle() {
+            var hide = $('#frontend-file-explorer-hide-credits').is(':checked');
+
+            $.ajax({
+                url: frontendFileExplorerAdminConfig.ajaxUrl,
+                type: 'POST',
+                data: {
+                    action: 'frontend_file_explorer_save_credits_preference',
+                    nonce: frontendFileExplorerAdminConfig.nonce,
+                    hide_credits: hide
+                },
+                success: (response) => {
+                    if (response.success) {
+                        var $credit = $('.frontend-file-explorer-credit');
+                        if (hide) {
+                            $credit.fadeOut(300, () => $credit.remove());
+                        } else {
+                            if (!$credit.length) {
+                                this.showSuccess(frontendFileExplorerAdminConfig.strings.creditsSaved);
+                            }
+                        }
+                        this.showSuccess(frontendFileExplorerAdminConfig.strings.creditsSaved);
+                    } else {
+                        this.showError(response.data);
+                        $('#frontend-file-explorer-hide-credits').prop('checked', !hide);
+                    }
+                },
+                error: () => {
+                    this.showError(frontendFileExplorerAdminConfig.strings.error);
+                    $('#frontend-file-explorer-hide-credits').prop('checked', !hide);
+                }
+            });
         }
 
         handleCopyShortcode(e) {

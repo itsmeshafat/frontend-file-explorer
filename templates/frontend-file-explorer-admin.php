@@ -141,12 +141,41 @@ if (!defined('ABSPATH')) {
         </div>
     </div>
 
+    <div class="frontend-file-explorer-preferences-card">
+        <div class="frontend-file-explorer-preferences-card-main">
+            <div class="frontend-file-explorer-preferences-card-header">
+                <span class="material-icons">tune</span>
+                <?php esc_html_e('Preferences', 'frontend-file-explorer'); ?>
+            </div>
+            <div class="frontend-file-explorer-preferences-card-body">
+                <label class="frontend-file-explorer-preferences-toggle">
+                    <input type="checkbox" id="frontend-file-explorer-hide-credits" <?php checked($hide_credits); ?>>
+                    <span class="frontend-file-explorer-preferences-toggle-switch"></span>
+                    <span class="frontend-file-explorer-preferences-toggle-label"><?php esc_html_e('Hide author credit', 'frontend-file-explorer'); ?></span>
+                </label>
+                <p class="frontend-file-explorer-preferences-note"><?php esc_html_e('Removes the "Built by" line from both admin and frontend views.', 'frontend-file-explorer'); ?></p>
+            </div>
+        </div>
+        <div class="frontend-file-explorer-preferences-card-divider"></div>
+        <div class="frontend-file-explorer-preferences-card-support">
+            <div class="frontend-file-explorer-preferences-support-text">
+                <strong><?php esc_html_e('Enjoying the plugin?', 'frontend-file-explorer'); ?></strong>
+                <span><?php esc_html_e('Support its development with a coffee.', 'frontend-file-explorer'); ?></span>
+            </div>
+            <a href="https://www.buymeacoffee.com/itsmeshafat" target="_blank" rel="noopener noreferrer">
+                <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me a Coffee" style="height: 50px; width: auto;">
+            </a>
+        </div>
+    </div>
+
+    <?php if (!$hide_credits) : ?>
     <p class="frontend-file-explorer-credit">
         <?php echo sprintf(
             esc_html__('Built by %1$s', 'frontend-file-explorer'),
             '<a href="https://itsmeshafat.com" target="_blank" rel="noopener noreferrer">Shafat Mahmud Khan</a>'
         ); ?>
     </p>
+    <?php endif; ?>
 </div>
 
 <script type="text/html" id="tmpl-frontend-file-explorer-folder">

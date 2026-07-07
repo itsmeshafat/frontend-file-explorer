@@ -3,7 +3,7 @@ Contributors:      itsmeshafat
 Requires at least: 5.6
 Requires PHP:      7.4
 Tested up to:      7.0
-Stable tag:        1.0.7
+Stable tag:        1.0.8
 License:           GPLv2 or later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 Donate link:       https://itsmeshafat.com
@@ -53,6 +53,10 @@ The plugin provides a seamless experience for both administrators and frontend u
 * Site owners who want a lightweight, Explorer-like file manager in WordPress.
 
 == Upgrade Notice ==
+
+= 1.0.8 =
+
+This release adds Buy Me a Coffee support options, a credit removal toggle, and a settings panel. No manual action is required.
 
 = 1.0.7 =
 
@@ -107,12 +111,27 @@ By default, allowed file types are defined via options during activation. You ca
 
 The plugin is fully localization-ready and uses the `frontend-file-explorer` text domain. You can use tools like Loco Translate or Poedit to create translations and drop `.mo` files in the `languages/` directory.
 
+== Support Development ==
+
+If you find this plugin useful and want to support its continued development, consider buying me a coffee!
+
+[![Buy Me a Coffee](https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png)](https://www.buymeacoffee.com/itsmeshafat)
+
+Your support helps keep the plugin maintained, secure, and free for everyone.
+
 == Screenshots ==
 
 1. Admin file explorer with folders, uploads, and toolbar actions (backend).
 2. Frontend file explorer embedded via shortcode (frontend view).
 
 == Changelog ==
+
+= 1.0.8 =
+
+* **Feature:** Added "Hide author credits" toggle (Settings panel) — removes credits from DOM when checked, dofollow attribution when visible.
+* **Feature:** Added Buy Me a Coffee support button on the admin page, Plugins screen, readme.txt, and README.md.
+* **UI:** Added a settings card below the shortcode panel with checkbox and support links.
+* **Internal:** Added `plugin_row_meta` filter for plugin action links, `save_credits_preference` AJAX endpoint, and `frontend_file_explorer_hide_credits` option.
 
 = 1.0.7 =
 

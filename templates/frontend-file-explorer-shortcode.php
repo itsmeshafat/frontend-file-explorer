@@ -58,6 +58,7 @@ if (!defined('ABSPATH')) {
         </button>
     </div>
 
+    <?php if (!$hide_credits) : ?>
     <p class="frontend-file-explorer-credit">
         <?php echo sprintf(
             /* translators: 1: developer name, 2: portfolio URL */
@@ -66,6 +67,7 @@ if (!defined('ABSPATH')) {
             '<a href="https://itsmeshafat.com" target="_blank" rel="noopener noreferrer">itsmeshafat.com</a>'
         ); ?>
     </p>
+    <?php endif; ?>
 </div>
 
 <!-- Templates -->
